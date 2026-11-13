@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>心智圖工作室</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;font-family:"Noto Sans CJK TC","Microsoft JhengHei","PingFang TC",sans-serif;background:#f7f8fa}
+#top{position:fixed;left:0;right:0;top:0;height:auto;min-height:44px;background:#fff;border-bottom:1px solid #ccc;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;box-sizing:border-box;z-index:6}
+#top button{padding:5px 9px;font-size:13px;cursor:pointer}#bSave{font-weight:bold;background:#2e7d32;color:#fff;border:0;border-radius:4px}
+#st{font-size:13px;margin-left:6px}
+#side{position:fixed;left:0;top:44px;bottom:0;width:230px;background:#fff;border-right:1px solid #ccc;overflow:auto;z-index:5;font-size:13px}
+#side h3{margin:10px 10px 6px;font-size:14px}#list div{padding:7px 10px;cursor:pointer;border-left:4px solid transparent;word-break:break-all}
+#list div.on{background:#e8f0fe;border-left-color:#3b5bdb;font-weight:bold}
+#side .ops{padding:4px 10px;display:flex;flex-wrap:wrap;gap:4px}#side .ops button{font-size:12px;padding:4px 6px;cursor:pointer}
+#help{margin:10px;padding:8px;border:1px solid #ddd;border-radius:6px;line-height:1.6;background:#fafafa}
+#wrap{position:fixed;left:230px;right:0;top:44px;bottom:0}
+svg{width:100%;height:100%;cursor:grab}
+.node rect{stroke:#555;stroke-width:1}.node.sel rect{stroke:#e33;stroke-width:3}.node text{font-size:14px;user-select:none}
+#ed{position:fixed;display:none;z-index:9;font-size:14px;padding:3px}
+</style></head><body>
+<div id="top"><button id="bSave">💾 儲存</button><span id="st"></span><span style="flex:1"></span>
+<button id="bAdd">新增子節點</button><button id="bSib">新增同層</button><button id="bDel">刪除節點</button>
+<button id="bExp1">匯出 JSON（本圖）</button><button id="bExpA">匯出 JSON（全部圖）</button><button id="bImp">匯入 JSON</button>
+<button id="bPng">匯出 PNG</button><button id="bSvg">匯出 SVG</button><button id="bReset">重設 drama-skills 為預設內容</button>
+<input type="file" id="file" accept=".json,application/json" style="display:none"></div>
+<div id="side"><h3>圖的清單</h3><div id="list"></div>
+<div class="ops"><button id="mNew">＋ 新增空白圖</button><button id="mRen">改名</button><button id="mDel">刪除此圖</button></div>
+<div id="help"><b>操作說明</b><br>點選節點選取｜雙擊或 F2 改文字<br>Tab 新增子節點｜Enter 新增同層<br>Delete 刪除｜空白鍵或點 ± 收合/展開<br>拖曳空白處移動畫布｜滾輪縮放<br>改動自動暫存於瀏覽器；按 💾 儲存 或 Ctrl+S 把全部圖寫回 HTML 檔<br>匯入 JSON：單張圖會新增成一張圖；全部圖會取代整份清單（會先確認）</div></div>
+<div id="wrap"><svg id="svg" xmlns="http://www.w3.org/2000/svg"><g id="vp"></g></svg></div><input id="ed">
+<script id="data" type="application/json">{"savedAt":0,"store":null}</script>
+<script>
+const DEFAULT_DS={"id": "n1", "text": "drama-skills", "children": [{"id": "n2", "text": "起始描述", "children": [{"id": "n3", "text": "題材與一句原始想法", "children": [], "collapsed": false}, {"id": "n4", "text": "風格・語氣與尺度", "children": [], "collapsed": false}, {"id": "n5", "text": "表達方式", "children": [], "collapsed": false}, {"id": "n6", "text": "觀看契約・觀眾體驗", "children": [], "collapsed": false}, {"id": "n7", "text": "禁區與結局承諾", "children": [], "collapsed": false}, {"id": "n8", "text": "集數・時長・畫幅・目標模型", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n9", "text": "流程順序（技能和 .md 檔）", "children": [{"id": "n10", "text": "0 short-drama 路由", "children": [{"id": "n11", "text": "creator-workflow.md", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n12", "text": "選用 develop", "children": [{"id": "n13", "text": "creative-brief.md", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n14", "text": "選用 novel-analyze", "children": [{"id": "n15", "text": "S1 後停下問創作者", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n16", "text": "① write → 劇本.md", "children": [], "collapsed": false}, {"id": "n17", "text": "② assets → 視覺設定.md", "children": [], "collapsed": false}, {"id": "n18", "text": "③ image-prompts → 圖片提示詞.md", "children": [], "collapsed": false}, {"id": "n19", "text": "④ storyboard → 分鏡.md", "children": [], "collapsed": false}, {"id": "n20", "text": "⑤ video-prompts → 視頻提示詞.md", "children": [], "collapsed": false}, {"id": "n21", "text": "produce → 制作成果", "children": [], "collapsed": false}, {"id": "n22", "text": "edit → 剪輯單.md・成片", "children": [], "collapsed": false}, {"id": "n23", "text": "review 點名才做", "children": [], "collapsed": false}, {"id": "n24", "text": "export 匯出", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n25", "text": "規則", "children": [{"id": "n26", "text": "狀態只有 unset／accepted", "children": [], "collapsed": false}, {"id": "n27", "text": "下游只採用 accepted", "children": [], "collapsed": false}, {"id": "n28", "text": "只有真正的創作分叉才問", "children": [], "collapsed": false}, {"id": "n29", "text": "不偽造上游・不預建空檔", "children": [], "collapsed": false}, {"id": "n30", "text": "生產：預覽→明確確認→執行", "children": [], "collapsed": false}, {"id": "n31", "text": "每鏡：起點→唯一動作→終點", "children": [], "collapsed": false}, {"id": "n32", "text": "缺圖寫 PLAN 槽・照常產出", "children": [], "collapsed": false}, {"id": "n33", "text": "提示詞語言依 prompt_language", "children": [], "collapsed": false}, {"id": "n34", "text": "字幕取自劇本原文", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n35", "text": "自動產生的目錄和檔案", "children": [{"id": "n36", "text": "init", "children": [{"id": "n37", "text": "short-drama.json", "children": [], "collapsed": false}, {"id": "n38", "text": ".short-drama/state.json", "children": [], "collapsed": false}, {"id": "n39", "text": "輸入／項目開發／設定集", "children": [], "collapsed": false}, {"id": "n40", "text": "劇集／交付／創作者決策／審查", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n41", "text": "決策寫入", "children": [{"id": "n42", "text": "創作者決策/*.jsonl", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n43", "text": "每集", "children": [{"id": "n44", "text": "劇集/EPxxx/五份 md", "children": [], "collapsed": false}, {"id": "n45", "text": "剪輯單.md・制作成果/", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n46", "text": "審查/EPxxx-審查.md", "children": [], "collapsed": false}], "collapsed": false}, {"id": "n47", "text": "A女士實例", "children": [{"id": "n48", "text": "rhythm_profile 為 unset", "children": [], "collapsed": false}, {"id": "n49", "text": "prompt_language 為 en", "children": [], "collapsed": false}, {"id": "n50", "text": "EP001 五份 md 齊全", "children": [], "collapsed": false}, {"id": "n51", "text": "參考圖 A001–A003", "children": [], "collapsed": false}, {"id": "n52", "text": "推論：故事板 v1–v5 為手動新增", "children": [], "collapsed": false}], "collapsed": false}], "collapsed": false};const KEY='mindmap-studio-v1';
+const COLORS=['#cfe2ff','#ffe0b3','#d4f4dd','#f8d0e0','#e6d9ff','#fff3b0'];
+let seq=Date.now();const uid=p=>(p||'n')+(seq++).toString(36);
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function defaultStore(){return{active:'m-ds',maps:[{id:'m-ds',name:'drama-skills',root:clone(DEFAULT_DS)}]}}
+let lsOK=true,savedAt=0,fileSavedAt=0,fileHandle=null;
+function load(){let emb=null,ls=null;
+ try{const e=JSON.parse(document.getElementById('data').textContent);if(e&&e.store)emb=e}catch(x){}
+ try{const s=localStorage.getItem(KEY);if(s){const o=JSON.parse(s);if(o&&o.store)ls=o}}catch(x){lsOK=false}
+ fileSavedAt=emb?emb.savedAt:0;let pick=emb;if(ls&&(!emb||ls.savedAt>emb.savedAt))pick=ls;
+ if(pick){savedAt=pick.savedAt;return pick.store}return defaultStore()}
+let store=load();
+function cur(){return store.maps.find(m=>m.id===store.active)||store.maps[0]}
+let data=cur().root,sel=data.id,tx=40,ty=0,sc=1;
+function save(){savedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify({savedAt,store}));lsOK=true}catch(x){lsOK=false}status()}
+function status(){const el=document.getElementById('st');const un=savedAt>fileSavedAt;
+ el.textContent=(un?'● 未儲存到檔案':'✔ 已儲存')+(lsOK?'（瀏覽器暫存：有）':'（瀏覽器不允許暫存，請按 💾 儲存）');el.style.color=un?'#c0392b':'#2e7d32'}
+function find(id,n=data,p=null){if(n.id===id)return{n,p};for(const c of n.children){const r=find(id,c,n);if(r)return r}return null}
+const svg=document.getElementById('svg'),vp=document.getElementById('vp'),NS='http://www.w3.org/2000/svg';
+const mc=document.createElement('canvas').getContext('2d');
+function tw(t,b){mc.font=(b?'bold ':'')+'14px "Noto Sans CJK TC",sans-serif';return mc.measureText(t).width}
+function layout(n,d,x){n._w=tw(n.text,d<2)+24;n._x=x;n._d=d;const k=n.collapsed?[]:n.children;
+ if(!k.length){n._sh=40;return}let s=0;for(const c of k){layout(c,d+1,x+n._w+50);s+=c._sh}n._sh=Math.max(s,40)}
+function place(n,top){n._y=top+n._sh/2;let t=top;if(!n.collapsed)for(const c of n.children){place(c,t);t+=c._sh}}
+function el(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e}
+function render(){vp.innerHTML='';layout(data,0,0);place(data,0);if(!ty)ty=Math.max(20,svg.clientHeight/2-data._sh/2);
+ vp.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`);draw(data,0);renderList()}
+function draw(n,ci){const col=n._d===0?'#3b5bdb':COLORS[ci%COLORS.length];
+ if(!n.collapsed)n.children.forEach((c,i)=>{const k=n._d===0?i:ci;const x1=n._x+n._w,y1=n._y,x2=c._x,y2=c._y;
+  el('path',{d:`M${x1},${y1} C${x1+25},${y1} ${x2-25},${y2} ${x2},${y2}`,fill:'none',stroke:'#999','stroke-width':1.5},vp);draw(c,k)});
+ const g=el('g',{class:'node'+(n.id===sel?' sel':''),'data-id':n.id},vp);
+ el('rect',{x:n._x,y:n._y-15,width:n._w,height:30,fill:col,rx:6},g);
+ const t=el('text',{x:n._x+12,y:n._y+5,fill:n._d===0?'#fff':'#222','font-weight':n._d<2?'bold':'normal','font-family':'Noto Sans CJK TC, Microsoft JhengHei, sans-serif'},g);t.textContent=n.text;
+ if(n.children.length){const b=el('g',{class:'tog','data-id':n.id,style:'cursor:pointer'},vp);el('circle',{cx:n._x+n._w+8,cy:n._y,r:7,fill:'#fff',stroke:'#666'},b);
+  const s=el('text',{x:n._x+n._w+8,y:n._y+4,'text-anchor':'middle','font-size':12},b);s.textContent=n.collapsed?'+':'−'}}
+function renderList(){const L=document.getElementById('list');L.innerHTML='';for(const m of store.maps){const d=document.createElement('div');
+ d.textContent=m.name;d.dataset.id=m.id;if(m.id===store.active)d.className='on';d.onclick=()=>switchMap(m.id);L.appendChild(d)}}
+function switchMap(id){endEdit(true);store.active=id;data=cur().root;sel=data.id;tx=40;ty=0;sc=1;save();render()}
+function commit(){save();render()}
+const newNode=t=>({id:uid(),text:t,children:[],collapsed:false});
+function addChild(){const r=find(sel);if(!r)return;const c=newNode('新節點');r.n.collapsed=false;r.n.children.push(c);sel=c.id;commit();edit()}
+function addSib(){const r=find(sel);if(!r||!r.p)return addChild();const c=newNode('新節點');r.p.children.splice(r.p.children.indexOf(r.n)+1,0,c);sel=c.id;commit();edit()}
+function del(){const r=find(sel);if(!r||!r.p){alert('中心節點不能刪除');return}r.p.children.splice(r.p.children.indexOf(r.n),1);sel=r.p.id;commit()}
+function toggle(id){const r=find(id);if(r&&r.n.children.length){r.n.collapsed=!r.n.collapsed;commit()}}
+function newMap(){const name=(prompt('新圖的名稱：','未命名心智圖')||'').trim();if(!name)return;
+ const m={id:uid('m'),name,root:newNode(name)};store.maps.push(m);switchMap(m.id)}
+function renMap(){const m=cur();const name=(prompt('新的圖名稱：',m.name)||'').trim();if(!name)return;m.name=name;commit()}
+function delMap(){const m=cur();if(store.maps.length<=1){alert('至少要保留一張圖');return}
+ if(!confirm(`確定要刪除「${m.name}」這張圖嗎？刪除後無法復原（除非之前有匯出或儲存過）。`))return;
+ store.maps=store.maps.filter(x=>x!==m);switchMap(store.maps[0].id)}
+const ed=document.getElementById('ed');
+function edit(){const r=find(sel);if(!r)return;const g=vp.querySelector(`.node[data-id="${sel}"] rect`);const b=g.getBoundingClientRect();
+ Object.assign(ed.style,{display:'block',left:b.left+'px',top:b.top+'px',width:Math.max(b.width,160)+'px'});ed.value=r.n.text;ed.focus();ed.select()}
+function endEdit(ok){if(ed.style.display!=='block')return;const r=find(sel);ed.style.display='none';ed.blur();if(ok&&r&&ed.value.trim()){r.n.text=ed.value.trim()}commit()}
+const isSave=e=>(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s';
+ed.addEventListener('keydown',e=>{if(isSave(e)){e.preventDefault();e.stopPropagation();saveFile();return}e.stopPropagation();if(e.key==='Enter')endEdit(true);if(e.key==='Escape')endEdit(false)});
+ed.addEventListener('blur',()=>endEdit(true));
+ed.addEventListener('input',()=>{const r=find(sel);if(r&&ed.value.trim()){r.n.text=ed.value.trim();save()}});
+let drag=null,downId=null,downT=0;
+svg.addEventListener('mousedown',e=>{const t=e.target.closest('.tog');if(t){toggle(t.dataset.id);return}const g=e.target.closest('.node');
+ if(g){const id=g.dataset.id,now=Date.now();if(id===downId&&now-downT<450){e.preventDefault();downId=null;sel=id;render();edit();return}sel=id;downId=id;downT=now;render();return}downId=null;drag={x:e.clientX-tx,y:e.clientY-ty};svg.style.cursor='grabbing'});
+window.addEventListener('mousemove',e=>{if(drag){tx=e.clientX-drag.x;ty=e.clientY-drag.y;vp.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`)}});
+window.addEventListener('mouseup',()=>{drag=null;svg.style.cursor='grab'});
+
+svg.addEventListener('wheel',e=>{e.preventDefault();const R=svg.getBoundingClientRect(),mx=e.clientX-R.left,my=e.clientY-R.top;const f=e.deltaY<0?1.1:1/1.1;const ns=Math.min(4,Math.max(.2,sc*f));
+ tx=mx-(mx-tx)*ns/sc;ty=my-(my-ty)*ns/sc;sc=ns;render()},{passive:false});
+document.addEventListener('keydown',e=>{if(isSave(e)){e.preventDefault();saveFile();return}if(e.target===ed&&ed.style.display==='block')return;if(e.target.tagName==='INPUT'&&e.target!==ed)return;
+ if(e.key==='Tab'){e.preventDefault();addChild()}else if(e.key==='Enter'){e.preventDefault();addSib()}else if(e.key==='F2'){e.preventDefault();edit()}
+ else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();del()}else if(e.key===' '){e.preventDefault();toggle(sel)}});
+function strip(n){return{id:n.id,text:n.text,collapsed:!!n.collapsed,children:n.children.map(strip)}}
+function stripStore(){return{active:store.active,maps:store.maps.map(m=>({id:m.id,name:m.name,root:strip(m.root)}))}}
+function dl(name,url){const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove()}
+const safe=s=>s.replace(/[\\/:*?"<>|]/g,'_');
+function buildHTML(){const d=document.documentElement.cloneNode(true);d.querySelector('#vp').innerHTML='';d.querySelector('#list').innerHTML='';
+ const e=d.querySelector('#ed');e.removeAttribute('style');e.value='';
+ d.querySelector('#data').textContent=JSON.stringify({savedAt,store:stripStore()}).replace(/</g,'\\u003c');return '<!DOCTYPE html>\n'+d.outerHTML}
+async function saveFile(){endEdit(true);save();const html=buildHTML();
+ try{if(window.showSaveFilePicker){if(!fileHandle)fileHandle=await showSaveFilePicker({suggestedName:'心智圖工作室.html',types:[{description:'HTML',accept:{'text/html':['.html']}}]});
+   const w=await fileHandle.createWritable();await w.write(html);await w.close()}
+  else dl('心智圖工作室.html',URL.createObjectURL(new Blob([html],{type:'text/html'})));
+  fileSavedAt=savedAt;status()}
+ catch(x){status();if(x.name!=='AbortError')alert('儲存失敗：'+x.message)}}
+function nodeOK(n){return n&&typeof n.text==='string'&&Array.isArray(n.children)&&n.children.every(nodeOK)}
+function reid(n){n.id=uid();n.collapsed=!!n.collapsed;n.children.forEach(reid);return n}
+function importJSON(t){let o;try{o=JSON.parse(t)}catch(x){alert('JSON 格式不正確');return}
+ if(o&&o.type==='mindmap-studio-all'&&Array.isArray(o.maps)){if(!o.maps.every(m=>m.name&&nodeOK(m.root))){alert('JSON 格式不正確');return}
+  if(!confirm(`要用匯入的 ${o.maps.length} 張圖取代目前全部的圖嗎？`))return;
+  store={active:o.maps[0].id||'',maps:o.maps.map(m=>({id:m.id||uid('m'),name:m.name,root:m.root}))};store.active=store.maps[0].id;switchMap(store.active);return}
+ let name,root;if(o&&o.type==='mindmap-studio-map'){name=o.name;root=o.root}else if(nodeOK(o)){name=o.text;root=o}
+ if(!nodeOK(root)){alert('JSON 格式不正確');return}
+ const m={id:uid('m'),name:name||root.text,root:reid(root)};store.maps.push(m);switchMap(m.id)}
+function svgString(){layout(data,0,0);place(data,0);let W=0;(function m(n){W=Math.max(W,n._x+n._w+30);if(!n.collapsed)n.children.forEach(m)})(data);
+ const H=data._sh+20,tmp=document.createElementNS(NS,'svg');tmp.setAttribute('xmlns',NS);tmp.setAttribute('width',W+20);tmp.setAttribute('height',H);
+ const st=document.createElementNS(NS,'style');st.textContent='.node rect{stroke:#555}text{font-family:"Noto Sans CJK TC",sans-serif;font-size:14px}';tmp.appendChild(st);
+ el('rect',{width:'100%',height:'100%',fill:'#fff'},tmp);const g=vp.cloneNode(true);g.setAttribute('transform','translate(10,10)');
+ g.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));tmp.appendChild(g);return{s:new XMLSerializer().serializeToString(tmp),W:W+20,H}}
+const $=id=>document.getElementById(id);
+$('bSave').onclick=saveFile;$('bAdd').onclick=addChild;$('bSib').onclick=addSib;$('bDel').onclick=del;
+$('mNew').onclick=newMap;$('mRen').onclick=renMap;$('mDel').onclick=delMap;
+$('bExp1').onclick=()=>{const m=cur();dl(safe(m.name)+'.json',URL.createObjectURL(new Blob([JSON.stringify({type:'mindmap-studio-map',name:m.name,root:strip(m.root)},null,2)],{type:'application/json'})))};
+$('bExpA').onclick=()=>dl('心智圖工作室_全部圖.json',URL.createObjectURL(new Blob([JSON.stringify({type:'mindmap-studio-all',...stripStore()},null,2)],{type:'application/json'})));
+$('bImp').onclick=()=>$('file').click();
+$('file').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(importJSON);e.target.value=''};
+$('bSvg').onclick=()=>{const {s}=svgString();dl(safe(cur().name)+'.svg',URL.createObjectURL(new Blob([s],{type:'image/svg+xml'})));render()};
+$('bPng').onclick=()=>{const {s,W,H}=svgString();render();const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=W*2;c.height=H*2;const x=c.getContext('2d');x.scale(2,2);x.drawImage(img,0,0);dl(safe(cur().name)+'.png',c.toDataURL('image/png'))};img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s)};
+$('bReset').onclick=()=>{if(!confirm('確定要把 drama-skills 這張圖重設為預設內容？其他圖不受影響。'))return;let m=store.maps.find(x=>x.id==='m-ds');
+ if(!m){m={id:'m-ds',name:'drama-skills',root:null};store.maps.unshift(m)}m.root=clone(DEFAULT_DS);switchMap('m-ds')};
+function fitTop(){const h=$('top').offsetHeight;$('side').style.top=h+'px';$('wrap').style.top=h+'px'}
+window.addEventListener('pagehide',()=>endEdit(true));
+window.addEventListener('beforeunload',e=>{endEdit(true);if(savedAt>fileSavedAt){e.preventDefault();e.returnValue=''}});
+window.addEventListener('resize',()=>{fitTop();render()});fitTop();render();status();
+</script></body></html>
