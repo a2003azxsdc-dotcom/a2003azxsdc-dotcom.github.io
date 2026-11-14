@@ -1,0 +1,25 @@
+{
+  "name": "童年課堂紙條造句 × AI生圖",
+  "short_name": "童年造句拉霸",
+  "description": "拉霸機抽出荒謬造句，複製提示詞後可到 Gemini 或 Grok 生圖。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "background_color": "#07050a",
+  "theme_color": "#07050a",
+  "lang": "zh-Hant",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "../assets/slot_cabinet.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
