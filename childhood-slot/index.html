@@ -26,6 +26,7 @@ body {
   font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
   overflow: hidden;
 }
+/* Survive a host page (e.g. Gemini share) turning body into a flex centering container */
 .app-wrap, .machine { align-self: flex-start; margin-top: 0; }
 button, input, select, textarea { font-family: inherit; }
 button { cursor: pointer; border: none; background: none; color: inherit; }
@@ -34,6 +35,9 @@ button { cursor: pointer; border: none; background: none; color: inherit; }
 }
 .hidden { display: none !important; }
 
+/* v5: contain-fit by default (v3). On a portrait phone (width <= 600px) that is
+   height-limited, fill container width, keep 1536:2752, top-align, and allow
+   vertical scrolling instead of shrinking the cabinet. */
 .app-wrap {
   box-sizing: border-box;
   width: 100%;
@@ -105,29 +109,31 @@ html.cabinet-scroll .machine {
 .zone { position: absolute; z-index: 2; }
 .debug .zone { outline: 1px solid rgba(0,255,255,0.85); }
 
+/* Mute / admin on speakers */
 .icon-btn {
   display: grid; place-items: center;
   border-radius: 50%;
-  font-size: 1.02em;
-  line-height: 1;
+  font-size: 0.72em;
   font-weight: 900;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   color: #1b1d22;
   background: radial-gradient(circle at 35% 30%, #fff, #c9d0d8 48%, #6a727a);
-  box-shadow: 0 2px 0 #2c3034, inset 0 1px 0 #fff, 0 0 8px rgba(255,210,80,0.35);
-  z-index: 12;
-  text-shadow: 0 1px 0 #fff;
+  box-shadow: 0 2px 0 #2c3034, inset 0 1px 0 #fff, 0 0 8px rgba(255,210,80,0.25);
 }
-.icon-btn[aria-pressed="true"] { color: #7a1020; filter: grayscale(0.4); }
+.icon-btn[aria-pressed="true"] { color: #7a1020; }
 
+/* Marquee over Hard Boiled logo */
 .zone-marquee {
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: linear-gradient(180deg, rgba(4,2,10,0.55) 0%, rgba(4,2,10,0.28) 70%, rgba(4,2,10,0.08) 100%);
+  background: linear-gradient(180deg, #14060c, #07040a);
+  border: 1px solid rgba(255, 215, 100, 0.55);
+  box-shadow: inset 0 0 10px rgba(255, 80, 80, 0.25), 0 0 10px rgba(255, 200, 60, 0.35);
+  border-radius: 3px;
 }
-.mq-bulbs { display: flex; justify-content: space-between; height: 12%; padding: 0 3%; flex-shrink: 0; }
+.mq-bulbs { display: flex; justify-content: space-between; height: 14%; padding: 0 2%; flex-shrink: 0; }
 .mq-bulbs i {
   width: 5px; height: 5px; border-radius: 50%;
   background: #fff6c0;
@@ -168,6 +174,7 @@ html.cabinet-scroll .machine {
   97.5% { opacity: 1; }
 }
 
+/* LCD sentence */
 .zone-lcd, .zone-history {
   opacity: 0;
   visibility: hidden;
@@ -180,17 +187,14 @@ html.cabinet-scroll .machine {
   pointer-events: auto;
 }
 .zone-lcd {
-  background: rgba(6, 4, 16, 0.82);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: inset 0 0 14px rgba(0,0,0,0.55), 0 0 10px rgba(255, 180, 40, 0.2);
-  border: 1px solid rgba(255, 215, 100, 0.38);
+  background: rgba(6, 4, 16, 0.92);
+  box-shadow: inset 0 0 14px rgba(0,0,0,0.55), 0 0 10px rgba(255, 180, 40, 0.15);
   color: var(--led);
   display: flex;
   flex-direction: column;
-  padding: 2% 3% 1.8%;
+  padding: 3% 3.2% 2.5%;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 2px;
 }
 .lcd-top {
   display: flex; align-items: center; justify-content: space-between;
@@ -213,9 +217,9 @@ html.cabinet-scroll .machine {
 .btn-copy.copied { color: #9dffb0; border-color: #3d8; }
 #sentence {
   flex: 1;
-  font-size: 0.78em;
+  font-size: 0.86em;
   font-weight: 800;
-  line-height: 1.3;
+  line-height: 1.35;
   overflow: auto;
   min-height: 0;
   text-shadow: 0 0 6px rgba(255, 227, 140, 0.35);
@@ -234,7 +238,7 @@ html.cabinet-scroll .machine {
 .zone-lcd.has-img #sentence, .zone-lcd.has-img .lcd-top { position: relative; z-index: 1; }
 .lcd-loading {
   position: absolute; inset: 0; z-index: 2;
-  background: rgba(0,0,0,0.78);
+  background: rgba(0,0,0,0.72);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 0.4em;
@@ -249,46 +253,23 @@ html.cabinet-scroll .machine {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Reels */
 .reel-window {
   overflow: hidden;
-  background: linear-gradient(180deg, #f8f8fc, #d0d1d8 55%, #b9bac4);
-  box-shadow: inset 0 6px 10px rgba(0,0,0,0.38), inset 0 -5px 8px rgba(0,0,0,0.3);
-  border-radius: 3px;
+  background: linear-gradient(180deg, #f4f4f8, #cfd0d8);
+  box-shadow: inset 0 4px 8px rgba(0,0,0,0.35), inset 0 -4px 8px rgba(0,0,0,0.28);
 }
-.reel-window::before {
-  content: "";
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(90deg,
-    rgba(0,0,0,0.38) 0%,
-    rgba(0,0,0,0.10) 12%,
-    rgba(255,255,255,0.22) 28%,
-    transparent 42%,
-    transparent 58%,
-    rgba(255,255,255,0.12) 74%,
-    rgba(0,0,0,0.12) 88%,
-    rgba(0,0,0,0.38) 100%);
-}
-.reel-window::after {
-  content: "";
-  position: absolute; left: 0; right: 0; top: 0; height: 30%;
-  z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, rgba(255,255,255,0.38), transparent);
-}
-.reel-strip { will-change: transform; position: relative; z-index: 1; }
-.reel-window.spinning .reel-strip { filter: blur(4px) contrast(1.05) saturate(1.08); }
+.reel-strip { will-change: transform; }
+.reel-window.spinning .reel-strip { filter: blur(3px); }
 .reel-item {
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(180deg, #fcfcff 0%, #e8e8f0 42%, #c5c6d0 100%);
-  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.75);
+  background: linear-gradient(180deg, #fbfbfd 0%, #e6e6ee 45%, #c8c9d2 100%);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7);
 }
-.reel-item svg {
-  width: 86%; height: 86%; display: block;
-  filter: drop-shadow(0 3px 2px rgba(0,0,0,0.45)) drop-shadow(0 0 3px rgba(255,220,80,0.25));
-}
-.reel-window.landed {
-  box-shadow: inset 0 0 16px rgba(255, 210, 70, 0.45), inset 0 4px 8px rgba(0,0,0,0.3);
-}
+.reel-item svg { width: 82%; height: 82%; display: block; }
+.reel-window.landed { box-shadow: inset 0 0 12px rgba(255, 200, 60, 0.28), inset 0 4px 8px rgba(0,0,0,0.3); }
 
+/* Transparent hit targets on real buttons / knob */
 .slot-knob, .slot-btn {
   border-radius: 50%;
   background: transparent;
@@ -350,9 +331,11 @@ html.cabinet-scroll .machine {
   text-align: center;
   transform: translateX(-50%);
 }
+/* Centered above the same three red buttons in both versions */
 .speech-bubble[data-bubble-step="1"] { left: 36.95%; }
 .speech-bubble[data-bubble-step="2"] { left: 50.46%; }
 .speech-bubble[data-bubble-step="3"] { left: 63.96%; }
+/* Visible ~3s, hidden ~2s, then repeat */
 .speech-bubble.is-on { display: block; animation: bubble-cycle 5s ease-in-out infinite; }
 .speech-bubble::after {
   content: "";
@@ -409,6 +392,7 @@ html.cabinet-scroll .machine {
 .upload-preview .meta span { color: var(--muted); max-width: 8em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 .linkish { background: none; color: #ff8a8a; font-size: 1em; font-weight: 700; padding: 2px; }
 
+/* History over lower art panel */
 .zone-history {
   background: rgba(6, 4, 12, 0.82);
   box-shadow: inset 0 0 16px rgba(0,0,0,0.5);
@@ -450,6 +434,158 @@ html.cabinet-scroll .machine {
 }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .thumb:focus, .thumb:hover { outline: 2px solid var(--gold); }
+
+/* Toast / lightbox / admin — same roles as before */
+#toast {
+  position: fixed; left: 50%; bottom: 20px;
+  transform: translateX(-50%) translateY(16px);
+  background: #1a1210; color: #fff;
+  border: 1px solid var(--gold);
+  padding: 10px 14px; font-size: 13px; font-weight: 700;
+  z-index: 80; max-width: 90vw; opacity: 0; pointer-events: none;
+  transition: 0.25s; border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+#lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92); z-index: 90;
+  padding: 16px; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+#lightbox.show { display: flex; }
+#lightbox img { max-width: 100%; max-height: 78dvh; object-fit: contain; }
+#lightbox .cap { color: var(--led); font-size: 13px; font-weight: 700; margin-top: 10px; text-align: center; max-width: 36em; }
+#lightbox .x {
+  position: absolute; top: 10px; right: 10px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #fff; color: #000; font-size: 20px; font-weight: 900;
+}
+
+#admin {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.76); z-index: 70;
+  overflow: auto; padding: 12px 8px 24px;
+}
+#admin.show { display: block; }
+.admin-card {
+  max-width: 480px; margin: 0 auto;
+  background: linear-gradient(180deg, #241018, #161016);
+  border: 2px solid #b8860b; border-radius: 10px; padding: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+.admin-card h2 { font-size: 16px; color: var(--gold); margin-bottom: 8px; }
+.admin-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; }
+.admin-row select, .admin-row input, .admin-card textarea, .field input, .field textarea {
+  background: #0c0a0e; color: var(--text); border: 1px solid #5a5050;
+  padding: 7px 8px; font-size: 13px; border-radius: 4px;
+}
+.admin-row select { flex: 1; min-width: 140px; }
+.mini {
+  background: #2a2428; color: #fff; border: 1px solid #6a6060;
+  padding: 6px 8px; font-size: 12px; font-weight: 800; border-radius: 4px;
+}
+.mini.gold { background: #5a4010; border-color: var(--gold); color: var(--gold); }
+.mini.danger { background: #4a1010; border-color: #f66; color: #f88; }
+.tabs { display: flex; gap: 4px; margin: 8px 0; }
+.tabs button {
+  flex: 1; padding: 8px 4px; font-size: 13px; font-weight: 800;
+  background: #2a2024; color: var(--muted); border-bottom: 2px solid transparent;
+}
+.tabs button.on { color: var(--gold); border-bottom-color: var(--gold); background: #3a2820; }
+.entry-list { max-height: 280px; overflow: auto; display: grid; gap: 6px; }
+.entry { background: #0e0c10; border: 1px solid #3a3438; padding: 8px; font-size: 12px; border-radius: 4px; }
+.entry b { display: block; font-size: 13px; margin-bottom: 2px; }
+.entry .en { color: var(--muted); line-height: 1.4; word-break: break-word; }
+.entry .row { display: flex; gap: 6px; margin-top: 6px; }
+.field { display: grid; gap: 4px; margin-top: 8px; }
+.field label { font-size: 11px; color: var(--muted); font-weight: 700; }
+
+
+/* v2: translucent marquee over the top arcade scene */
+.zone-marquee {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(4,2,10,0.55) 0%, rgba(4,2,10,0.28) 70%, rgba(4,2,10,0.08) 100%);
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.mq-bulbs { display: flex; justify-content: space-between; height: 12%; padding: 0 3%; flex-shrink: 0; }
+.mq-bulbs i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #fff6c0;
+  box-shadow: 0 0 5px #ffd764;
+  animation: chase-bulb 0.9s linear infinite;
+  align-self: center;
+}
+
+/* v2: glass LCD so the lightbox art still peeks through */
+.zone-lcd {
+  background: rgba(6, 4, 16, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: inset 0 0 14px rgba(0,0,0,0.55), 0 0 10px rgba(255, 180, 40, 0.2);
+  border: 1px solid rgba(255, 215, 100, 0.38);
+  color: var(--led);
+  display: flex;
+  flex-direction: column;
+  padding: 2.4% 3.2% 2.2%;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+/* v2: 3D cylindrical reel windows */
+.reel-window {
+  overflow: hidden;
+  background: linear-gradient(180deg, #f8f8fc, #d0d1d8 55%, #b9bac4);
+  box-shadow: inset 0 6px 10px rgba(0,0,0,0.38), inset 0 -5px 8px rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+.reel-window::before {
+  content: "";
+  position: absolute inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(0,0,0,0.38) 0%,
+    rgba(0,0,0,0.10) 12%,
+    rgba(255,255,255,0.22) 28%,
+    transparent 42%,
+    transparent 58%,
+    rgba(255,255,255,0.12) 74%,
+    rgba(0,0,0,0.12) 88%,
+    rgba(0,0,0,0.38) 100%);
+}
+.reel-window::after {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0; height: 30%;
+  z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.38), transparent);
+}
+.reel-strip { will-change: transform; position: relative; z-index: 1; }
+.reel-window.spinning .reel-strip { filter: blur(4px) contrast(1.05) saturate(1.08); }
+.reel-item {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #fcfcff 0%, #e8e8f0 42%, #c5c6d0 100%);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.75);
+}
+.reel-item svg {
+  width: 86%; height: 86%; display: block;
+  filter: drop-shadow(0 3px 2px rgba(0,0,0,0.45)) drop-shadow(0 0 3px rgba(255,220,80,0.25));
+}
+.reel-window.landed {
+  box-shadow: inset 0 0 16px rgba(255, 210, 70, 0.45), inset 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.icon-btn {
+  z-index: 12;
+  font-size: 1.05em;
+  line-height: 1;
+  text-shadow: 0 1px 0 #fff;
+}
+.icon-btn[aria-pressed="true"] { color: #7a1020; filter: grayscale(0.4); }
 
 .fx-layer {
   position: absolute; inset: 0;
@@ -506,114 +642,176 @@ html.cabinet-scroll .machine {
   50% { opacity: 0.9; }
 }
 
-#toast {
-  position: fixed; left: 50%; bottom: 20px;
-  transform: translateX(-50%) translateY(16px);
-  background: #1a1210; color: #fff;
-  border: 1px solid var(--gold);
-  padding: 10px 14px; font-size: 13px; font-weight: 700;
-  z-index: 80; max-width: 90vw; opacity: 0; pointer-events: none;
-  transition: 0.25s; border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-#lightbox {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.92); z-index: 90;
-  padding: 16px; flex-direction: column;
-  align-items: center; justify-content: center;
-}
-#lightbox.show { display: flex; }
-#lightbox img { max-width: 100%; max-height: 78dvh; object-fit: contain; }
-#lightbox .cap { color: var(--led); font-size: 13px; font-weight: 700; margin-top: 10px; text-align: center; max-width: 36em; }
-#lightbox .x {
-  position: absolute; top: 10px; right: 10px;
-  width: 40px; height: 40px; border-radius: 50%;
-  background: #fff; color: #000; font-size: 20px; font-weight: 900;
-}
-
-#admin {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.76); z-index: 70;
-  overflow: auto; padding: 12px 8px 24px;
-}
-#admin.show { display: block; }
-.admin-card {
-  width: 100%; max-width: 440px; margin: 0 auto;
-  background: linear-gradient(180deg, #241018, #161016);
-  border: 2px solid #b8860b; border-radius: 12px; padding: 16px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.65);
-}
-.admin-card h2 { font-size: 17px; color: var(--gold); margin-bottom: 8px; }
-.admin-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; }
-.admin-row select, .admin-row input, .admin-card textarea, .field input, .field textarea {
-  background: #0c0a0e; color: var(--text); border: 1px solid #5a5050;
-  padding: 8px 10px; font-size: 13px; border-radius: 6px; width: 100%;
-}
-.admin-row select { flex: 1; min-width: 140px; }
-.mini {
-  background: #2a2428; color: #fff; border: 1px solid #6a6060;
-  padding: 7px 10px; font-size: 12px; font-weight: 800; border-radius: 5px;
-}
-.mini.gold { background: #5a4010; border-color: var(--gold); color: var(--gold); }
-.mini.danger { background: #4a1010; border-color: #f66; color: #f88; }
-.tabs { display: flex; gap: 4px; margin: 8px 0; }
-.tabs button {
-  flex: 1; padding: 8px 4px; font-size: 13px; font-weight: 800;
-  background: #2a2024; color: var(--muted); border-bottom: 2px solid transparent;
-}
-.tabs button.on { color: var(--gold); border-bottom-color: var(--gold); background: #3a2820; }
-.entry-list { max-height: 280px; overflow: auto; display: grid; gap: 6px; }
-.entry { background: #0e0c10; border: 1px solid #3a3438; padding: 8px; font-size: 12px; border-radius: 4px; }
-.entry b { display: block; font-size: 13px; margin-bottom: 2px; }
-.entry .en { color: var(--muted); line-height: 1.4; word-break: break-word; }
-.entry .row { display: flex; gap: 6px; margin-top: 6px; }
-.field { display: grid; gap: 4px; margin-top: 8px; }
-.field label { font-size: 11px; color: var(--muted); font-weight: 700; }
+#sentence { font-size: 0.78em; line-height: 1.3; }
+.zone-lcd { padding: 2% 3% 1.8%; }
   </style>
 </head>
 <body>
+  
 <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
   <defs>
-    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset="0.4" stop-color="#ffd24a"/><stop offset="1" stop-color="#b07a10"/></linearGradient>
-    <linearGradient id="gRed7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#ff6a6a"/><stop offset="0.45" stop-color="#e01018"/><stop offset="1" stop-color="#7a0008"/></linearGradient>
-    <linearGradient id="gCherry" x1="0.3" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#ff5a63"/><stop offset="0.5" stop-color="#c00818"/><stop offset="1" stop-color="#6a0010"/></linearGradient>
-    <linearGradient id="gBell" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3a0"/><stop offset="0.5" stop-color="#f0c020"/><stop offset="1" stop-color="#a07008"/></linearGradient>
-    <linearGradient id="gLemon" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#fff58a"/><stop offset="0.5" stop-color="#f0d000"/><stop offset="1" stop-color="#c4a000"/></linearGradient>
-    <linearGradient id="gGrape" x1="0.2" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#d9a0ff"/><stop offset="0.5" stop-color="#7a28b8"/><stop offset="1" stop-color="#3a1060"/></linearGradient>
-    <linearGradient id="gMelonR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9a"/><stop offset="1" stop-color="#c01030"/></linearGradient>
-    <linearGradient id="gMelonG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ee08a"/><stop offset="1" stop-color="#1e7a20"/></linearGradient>
-    <linearGradient id="gOrange" x1="0.3" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#ffd08a"/><stop offset="0.45" stop-color="#ff8a14"/><stop offset="1" stop-color="#c05000"/></linearGradient>
-    <linearGradient id="gDia" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8fbff"/><stop offset="0.4" stop-color="#4ad8ff"/><stop offset="1" stop-color="#0a58c0"/></linearGradient>
-    <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffce0"/><stop offset="0.45" stop-color="#ffd24a"/><stop offset="1" stop-color="#d08000"/></linearGradient>
-    <linearGradient id="gBarBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4a4a"/><stop offset="1" stop-color="#8a0008"/></linearGradient>
-    <symbol id="sym-seven" viewBox="0 0 100 100"><circle cx="50" cy="52" r="44" fill="#f0c020" stroke="#7a4a00" stroke-width="2"/><text x="50" y="74" text-anchor="middle" font-family="Impact,'Arial Black',sans-serif" font-size="78" font-weight="900" fill="url(#gRed7)" stroke="url(#gGold)" stroke-width="2">7</text></symbol>
-    <symbol id="sym-bar" viewBox="0 0 100 100"><rect x="10" y="32" width="80" height="36" rx="5" fill="url(#gGold)"/><rect x="14" y="36" width="72" height="28" rx="3" fill="url(#gBarBg)"/><text x="50" y="58" text-anchor="middle" font-family="Impact,sans-serif" font-size="22" font-weight="900" fill="#fff">BAR</text></symbol>
-    <symbol id="sym-bar2" viewBox="0 0 100 100"><rect x="12" y="18" width="76" height="28" rx="4" fill="url(#gGold)"/><rect x="16" y="21" width="68" height="22" rx="2" fill="url(#gBarBg)"/><text x="50" y="38" text-anchor="middle" font-family="Impact,sans-serif" font-size="16" fill="#fff">BAR</text><rect x="12" y="54" width="76" height="28" rx="4" fill="url(#gGold)"/><rect x="16" y="57" width="68" height="22" rx="2" fill="url(#gBarBg)"/><text x="50" y="74" text-anchor="middle" font-family="Impact,sans-serif" font-size="16" fill="#fff">BAR</text></symbol>
-    <symbol id="sym-bar3" viewBox="0 0 100 100"><rect x="14" y="10" width="72" height="24" rx="3" fill="url(#gGold)"/><text x="50" y="27" text-anchor="middle" font-family="Impact,sans-serif" font-size="13" fill="#8a0008">BAR</text><rect x="14" y="38" width="72" height="24" rx="3" fill="url(#gGold)"/><text x="50" y="55" text-anchor="middle" font-family="Impact,sans-serif" font-size="13" fill="#8a0008">BAR</text><rect x="14" y="66" width="72" height="24" rx="3" fill="url(#gGold)"/><text x="50" y="83" text-anchor="middle" font-family="Impact,sans-serif" font-size="13" fill="#8a0008">BAR</text></symbol>
-    <symbol id="sym-cherry" viewBox="0 0 100 100"><path d="M50 14 C50 14 46 40 30 50 M50 14 C50 14 56 38 70 48" fill="none" stroke="#1e5a14" stroke-width="4"/><ellipse cx="34" cy="70" rx="20" ry="22" fill="url(#gCherry)"/><ellipse cx="68" cy="66" rx="20" ry="22" fill="url(#gCherry)"/></symbol>
-    <symbol id="sym-bell" viewBox="0 0 100 100"><path d="M50 12 C32 12 24 30 24 48 C24 66 20 74 16 80 L84 80 C80 74 76 66 76 48 C76 30 68 12 50 12Z" fill="url(#gBell)"/><circle cx="50" cy="88" r="6" fill="#c08010"/></symbol>
-    <symbol id="sym-lemon" viewBox="0 0 100 100"><ellipse cx="50" cy="54" rx="36" ry="28" transform="rotate(-20 50 54)" fill="url(#gLemon)"/></symbol>
-    <symbol id="sym-grape" viewBox="0 0 100 100"><circle cx="42" cy="40" r="12" fill="url(#gGrape)"/><circle cx="58" cy="40" r="12" fill="url(#gGrape)"/><circle cx="32" cy="56" r="12" fill="url(#gGrape)"/><circle cx="50" cy="56" r="12" fill="url(#gGrape)"/><circle cx="68" cy="56" r="12" fill="url(#gGrape)"/><circle cx="50" cy="74" r="14" fill="url(#gGrape)"/></symbol>
-    <symbol id="sym-melon" viewBox="0 0 100 100"><path d="M12 70 A44 44 0 0 1 88 70 L50 92 Z" fill="url(#gMelonG)"/><path d="M22 66 A34 34 0 0 1 78 66 L50 84 Z" fill="url(#gMelonR)"/></symbol>
-    <symbol id="sym-star" viewBox="0 0 100 100"><polygon points="50,8 61,36 92,38 68,58 76,90 50,72 24,90 32,58 8,38 39,36" fill="url(#gStar)"/></symbol>
-    <symbol id="sym-diamond" viewBox="0 0 100 100"><polygon points="50,8 88,40 50,94 12,40" fill="url(#gDia)"/></symbol>
-    <symbol id="sym-orange" viewBox="0 0 100 100"><circle cx="50" cy="56" r="32" fill="url(#gOrange)"/></symbol>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6c8"/><stop offset="0.4" stop-color="#ffd24a"/><stop offset="1" stop-color="#b07a10"/>
+    </linearGradient>
+    <linearGradient id="gRed7" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#ff6a6a"/><stop offset="0.45" stop-color="#e01018"/><stop offset="1" stop-color="#7a0008"/>
+    </linearGradient>
+    <linearGradient id="gCherry" x1="0.3" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ff5a63"/><stop offset="0.5" stop-color="#c00818"/><stop offset="1" stop-color="#6a0010"/>
+    </linearGradient>
+    <linearGradient id="gBell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3a0"/><stop offset="0.5" stop-color="#f0c020"/><stop offset="1" stop-color="#a07008"/>
+    </linearGradient>
+    <linearGradient id="gLemon" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#fff58a"/><stop offset="0.5" stop-color="#f0d000"/><stop offset="1" stop-color="#c4a000"/>
+    </linearGradient>
+    <linearGradient id="gGrape" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#d9a0ff"/><stop offset="0.5" stop-color="#7a28b8"/><stop offset="1" stop-color="#3a1060"/>
+    </linearGradient>
+    <linearGradient id="gMelonR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a9a"/><stop offset="1" stop-color="#c01030"/>
+    </linearGradient>
+    <linearGradient id="gMelonG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ee08a"/><stop offset="1" stop-color="#1e7a20"/>
+    </linearGradient>
+    <linearGradient id="gOrange" x1="0.3" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ffd08a"/><stop offset="0.45" stop-color="#ff8a14"/><stop offset="1" stop-color="#c05000"/>
+    </linearGradient>
+    <linearGradient id="gDia" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8fbff"/><stop offset="0.4" stop-color="#4ad8ff"/><stop offset="1" stop-color="#0a58c0"/>
+    </linearGradient>
+    <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffce0"/><stop offset="0.45" stop-color="#ffd24a"/><stop offset="1" stop-color="#d08000"/>
+    </linearGradient>
+    <linearGradient id="gBarBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff4a4a"/><stop offset="1" stop-color="#8a0008"/>
+    </linearGradient>
+
+    <symbol id="sym-seven" viewBox="0 0 100 100">
+      <defs>
+        <radialGradient id="gSevenBg" cx="35%" cy="30%" r="70%">
+          <stop offset="0" stop-color="#fff3a0"/><stop offset="0.55" stop-color="#f0c020"/><stop offset="1" stop-color="#8a5a00"/>
+        </radialGradient>
+      </defs>
+      <circle cx="50" cy="52" r="44" fill="url(#gSevenBg)" stroke="#7a4a00" stroke-width="2"/>
+      <circle cx="50" cy="52" r="38" fill="none" stroke="#fff6c8" stroke-width="2" opacity="0.55"/>
+      <text x="50" y="76" text-anchor="middle" font-family="Impact, 'Arial Black', 'Noto Sans TC', sans-serif" font-size="78" font-weight="900" fill="#5a0008">7</text>
+      <text x="50" y="74" text-anchor="middle" font-family="Impact, 'Arial Black', 'Noto Sans TC', sans-serif" font-size="78" font-weight="900" fill="url(#gRed7)" stroke="#3a0000" stroke-width="1.2">7</text>
+      <text x="50" y="74" text-anchor="middle" font-family="Impact, 'Arial Black', 'Noto Sans TC', sans-serif" font-size="78" font-weight="900" fill="none" stroke="url(#gGold)" stroke-width="3.2">7</text>
+      <ellipse cx="38" cy="30" rx="16" ry="8" fill="#fff" opacity="0.35"/>
+    </symbol>
+
+    <symbol id="sym-bar" viewBox="0 0 100 100">
+      <rect x="10" y="32" width="80" height="36" rx="5" fill="url(#gGold)" stroke="#7a5a00" stroke-width="1.5"/>
+      <rect x="14" y="36" width="72" height="28" rx="3" fill="url(#gBarBg)"/>
+      <text x="50" y="58" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="22" font-weight="900" fill="#fff" stroke="#3a0000" stroke-width="0.8">BAR</text>
+    </symbol>
+
+    <symbol id="sym-bar2" viewBox="0 0 100 100">
+      <rect x="12" y="18" width="76" height="28" rx="4" fill="url(#gGold)"/>
+      <rect x="16" y="21" width="68" height="22" rx="2" fill="url(#gBarBg)"/>
+      <text x="50" y="38" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="16" font-weight="900" fill="#fff">BAR</text>
+      <rect x="12" y="54" width="76" height="28" rx="4" fill="url(#gGold)"/>
+      <rect x="16" y="57" width="68" height="22" rx="2" fill="url(#gBarBg)"/>
+      <text x="50" y="74" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="16" font-weight="900" fill="#fff">BAR</text>
+    </symbol>
+
+    <symbol id="sym-bar3" viewBox="0 0 100 100">
+      <rect x="14" y="10" width="72" height="24" rx="3" fill="url(#gGold)"/>
+      <rect x="18" y="13" width="64" height="18" rx="2" fill="url(#gBarBg)"/>
+      <text x="50" y="27" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#fff">BAR</text>
+      <rect x="14" y="38" width="72" height="24" rx="3" fill="url(#gGold)"/>
+      <rect x="18" y="41" width="64" height="18" rx="2" fill="url(#gBarBg)"/>
+      <text x="50" y="55" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#fff">BAR</text>
+      <rect x="14" y="66" width="72" height="24" rx="3" fill="url(#gGold)"/>
+      <rect x="18" y="69" width="64" height="18" rx="2" fill="url(#gBarBg)"/>
+      <text x="50" y="83" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="13" font-weight="900" fill="#fff">BAR</text>
+    </symbol>
+
+    <symbol id="sym-cherry" viewBox="0 0 100 100">
+      <path d="M50 14 C50 14 46 40 30 50" fill="none" stroke="#1e5a14" stroke-width="4" stroke-linecap="round"/>
+      <path d="M50 14 C50 14 56 38 70 48" fill="none" stroke="#1e5a14" stroke-width="4" stroke-linecap="round"/>
+      <path d="M50 12 C62 4 78 14 76 26 C64 22 56 20 50 16Z" fill="#3da12a" stroke="#1a5a12" stroke-width="1"/>
+      <ellipse cx="34" cy="70" rx="20" ry="22" fill="url(#gCherry)" stroke="#5a0008" stroke-width="1.2"/>
+      <ellipse cx="68" cy="66" rx="20" ry="22" fill="url(#gCherry)" stroke="#5a0008" stroke-width="1.2"/>
+      <ellipse cx="28" cy="62" rx="7" ry="5" fill="#fff" opacity="0.45"/>
+      <ellipse cx="62" cy="58" rx="7" ry="5" fill="#fff" opacity="0.45"/>
+    </symbol>
+
+    <symbol id="sym-bell" viewBox="0 0 100 100">
+      <path d="M50 12 C32 12 24 30 24 48 C24 66 20 74 16 80 L84 80 C80 74 76 66 76 48 C76 30 68 12 50 12Z" fill="url(#gBell)" stroke="#8a6000" stroke-width="1.5"/>
+      <ellipse cx="50" cy="18" rx="10" ry="7" fill="url(#gGold)" stroke="#8a6000" stroke-width="1"/>
+      <rect x="18" y="78" width="64" height="8" rx="3" fill="url(#gGold)" stroke="#8a6000" stroke-width="1"/>
+      <circle cx="50" cy="88" r="6" fill="#c08010" stroke="#8a6000" stroke-width="1"/>
+      <ellipse cx="40" cy="40" rx="10" ry="16" fill="#fff" opacity="0.28"/>
+    </symbol>
+
+    <symbol id="sym-lemon" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="54" rx="36" ry="28" transform="rotate(-20 50 54)" fill="url(#gLemon)" stroke="#8a7a00" stroke-width="1.5"/>
+      <ellipse cx="50" cy="54" rx="28" ry="20" transform="rotate(-20 50 54)" fill="none" stroke="#d8c040" stroke-width="1" opacity="0.5"/>
+      <path d="M30 26 C38 14 58 16 62 26 C50 24 40 24 30 26Z" fill="#3da12a" stroke="#1a5a12" stroke-width="1"/>
+      <ellipse cx="40" cy="44" rx="10" ry="7" transform="rotate(-20 40 44)" fill="#fff" opacity="0.4"/>
+    </symbol>
+
+    <symbol id="sym-grape" viewBox="0 0 100 100">
+      <path d="M48 8 C48 8 46 22 40 28" fill="none" stroke="#1e5a14" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M48 10 C62 6 74 16 70 26 C60 20 54 18 48 12Z" fill="#3da12a"/>
+      <circle cx="42" cy="40" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="58" cy="40" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="32" cy="56" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="50" cy="56" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="68" cy="56" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="40" cy="72" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="58" cy="72" r="12" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <circle cx="50" cy="86" r="11" fill="url(#gGrape)" stroke="#3a1060" stroke-width="1"/>
+      <ellipse cx="38" cy="36" rx="4" ry="3" fill="#fff" opacity="0.35"/>
+      <ellipse cx="54" cy="36" rx="4" ry="3" fill="#fff" opacity="0.35"/>
+    </symbol>
+
+    <symbol id="sym-melon" viewBox="0 0 100 100">
+      <path d="M12 70 A44 44 0 0 1 88 70 L50 92 Z" fill="url(#gMelonG)" stroke="#0e4a10" stroke-width="1.2"/>
+      <path d="M18 68 A38 38 0 0 1 82 68 L50 86 Z" fill="#f4ffe8"/>
+      <path d="M22 66 A34 34 0 0 1 78 66 L50 84 Z" fill="url(#gMelonR)"/>
+      <circle cx="42" cy="70" r="2.2" fill="#2a1010"/>
+      <circle cx="54" cy="74" r="2.2" fill="#2a1010"/>
+      <circle cx="60" cy="66" r="2.2" fill="#2a1010"/>
+      <circle cx="38" cy="62" r="2" fill="#2a1010"/>
+      <circle cx="50" cy="64" r="2" fill="#2a1010"/>
+    </symbol>
+
+    <symbol id="sym-star" viewBox="0 0 100 100">
+      <polygon points="50,8 61,36 92,38 68,58 76,90 50,72 24,90 32,58 8,38 39,36" fill="url(#gStar)" stroke="#8a5a00" stroke-width="1.5" stroke-linejoin="round"/>
+      <polygon points="50,20 56,36 50,42 44,36" fill="#fff" opacity="0.4"/>
+    </symbol>
+
+    <symbol id="sym-diamond" viewBox="0 0 100 100">
+      <polygon points="50,8 88,40 50,94 12,40" fill="url(#gDia)" stroke="#0a3860" stroke-width="1.5" stroke-linejoin="round"/>
+      <polygon points="50,8 68,40 50,40 32,40" fill="#fff" opacity="0.35"/>
+      <polygon points="12,40 50,40 50,94" fill="#000" opacity="0.12"/>
+      <polyline points="32,40 50,8 68,40 50,94" fill="none" stroke="#fff" stroke-width="1" opacity="0.4"/>
+    </symbol>
+
+    <symbol id="sym-orange" viewBox="0 0 100 100">
+      <circle cx="50" cy="56" r="32" fill="url(#gOrange)" stroke="#8a4000" stroke-width="1.5"/>
+      <path d="M50 24 C50 24 48 16 50 10" fill="none" stroke="#1e5a14" stroke-width="3" stroke-linecap="round"/>
+      <path d="M50 16 C64 8 76 18 74 28 C62 22 56 20 50 18Z" fill="#3da12a" stroke="#1a5a12" stroke-width="1"/>
+      <ellipse cx="40" cy="46" rx="9" ry="6" fill="#fff" opacity="0.35"/>
+    </symbol>
   </defs>
 </svg>
 
-  <h1 class="visually-hidden">童年課堂紙條造句 × AI生圖</h1>
+  <h1 class="visually-hidden">童年課堂紙條造句 × AI生圖（Canvas 版）</h1>
   <div class="app-wrap">
     <div class="machine" id="machine">
       <img class="cabinet-art" alt="" draggable="false" src="https://a2003azxsdc-dotcom.github.io/assets/slot_cabinet_v2.svg">
-      <button type="button" class="icon-btn zone" id="btn-fullscreen" style="left:3.5%;top:2.0%;width:8.5%;height:4.7%" title="全螢幕切換" aria-label="全螢幕切換">⛶</button>
+      <button type="button" class="icon-btn zone" id="btn-fs" style="left:3.5%;top:2.0%;width:8.5%;height:4.7%" title="突破黑框全螢幕" aria-label="全螢幕">⛶</button>
       <button type="button" class="icon-btn zone" id="btn-mute" style="left:88%;top:2.0%;width:8.5%;height:4.7%" aria-pressed="false" title="關閉聲音" aria-label="切換靜音">♪</button>
       <canvas id="fx-layer" class="fx-layer" aria-hidden="true"></canvas>
-      <div class="jackpot-banner" id="jackpot-banner" aria-hidden="true">777 大当たり JACKPOT</div>
+      <div class="jackpot-banner" id="jackpot-banner" aria-hidden="true">777　大当たり　JACKPOT</div>
 
       <section class="zone zone-marquee" style="left:13%;top:1.8%;width:74%;height:9.2%" aria-label="跑馬燈區">
-        <div class="mq-bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="mq-bulbs"><i style="animation-delay:0.00s"></i><i style="animation-delay:0.05s"></i><i style="animation-delay:0.10s"></i><i style="animation-delay:0.15s"></i><i style="animation-delay:0.20s"></i><i style="animation-delay:0.25s"></i><i style="animation-delay:0.30s"></i><i style="animation-delay:0.35s"></i><i style="animation-delay:0.40s"></i><i style="animation-delay:0.45s"></i><i style="animation-delay:0.50s"></i><i style="animation-delay:0.55s"></i><i style="animation-delay:0.60s"></i><i style="animation-delay:0.65s"></i><i style="animation-delay:0.70s"></i><i style="animation-delay:0.75s"></i></div>
         <div class="marquee-box">
           <div class="marquee-track">
             <span>經典荒謬四句接龍，瞬間產出電影級生活感大片！</span>
@@ -622,15 +820,17 @@ html.cabinet-scroll .machine {
             <span>每次旋轉都是萬分之一機率的奇葩邂逅</span>
           </div>
         </div>
-        <div class="mq-bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="mq-bulbs"><i style="animation-delay:0.00s"></i><i style="animation-delay:0.05s"></i><i style="animation-delay:0.10s"></i><i style="animation-delay:0.15s"></i><i style="animation-delay:0.20s"></i><i style="animation-delay:0.25s"></i><i style="animation-delay:0.30s"></i><i style="animation-delay:0.35s"></i><i style="animation-delay:0.40s"></i><i style="animation-delay:0.45s"></i><i style="animation-delay:0.50s"></i><i style="animation-delay:0.55s"></i><i style="animation-delay:0.60s"></i><i style="animation-delay:0.65s"></i><i style="animation-delay:0.70s"></i><i style="animation-delay:0.75s"></i></div>
       </section>
 
       <section class="zone zone-lcd" style="left:12.5%;top:28.6%;width:75%;height:11.0%" aria-label="造句組合顯示區">
-        <img id="preview-image" class="lcd-preview hidden" alt="">
-        <div class="lcd-loading hidden" id="preview-loading">
-          <div class="spinner"></div>
-          <span>正在運算 9:16 荒謬實境大片...</span>
-        </div>
+        
+          <img id="preview-image" class="lcd-preview hidden" alt="">
+          <div class="lcd-loading hidden" id="preview-loading">
+            <div class="spinner"></div>
+            <span>正在呼叫 GEMINI 影像引擎...</span>
+          </div>
+
         <div class="lcd-top">
           <span class="lcd-tag">造句組合</span>
           <button type="button" class="btn-copy" id="btn-copy"><span id="copy-btn-text">複製提示詞</span></button>
@@ -638,29 +838,137 @@ html.cabinet-scroll .machine {
         <p id="sentence">請拉動拉桿，抽出今日荒謬造句！</p>
       </section>
 
-      <div class="zone reel-window" id="viewport-outfit" style="left:17.62%;top:44.42%;width:18.50%;height:11.62%"><div class="reel-strip" id="strip-outfit"></div></div>
-      <div class="zone reel-window" id="viewport-location" style="left:41.05%;top:44.42%;width:18.40%;height:11.62%"><div class="reel-strip" id="strip-location"></div></div>
-      <div class="zone reel-window" id="viewport-action" style="left:64.28%;top:44.42%;width:18.55%;height:11.62%"><div class="reel-strip" id="strip-action"></div></div>
+      <div class="zone reel-window" id="viewport-outfit" style="left:17.62%;top:44.42%;width:18.50%;height:11.62%" aria-label="拉霸滾輪 穿著">
+        <div class="reel-strip" id="strip-outfit"></div>
+      </div>
+      <div class="zone reel-window" id="viewport-location" style="left:41.05%;top:44.42%;width:18.40%;height:11.62%" aria-label="拉霸滾輪 地點">
+        <div class="reel-strip" id="strip-location"></div>
+      </div>
+      <div class="zone reel-window" id="viewport-action" style="left:64.28%;top:44.42%;width:18.55%;height:11.62%" aria-label="拉霸滾輪 動作">
+        <div class="reel-strip" id="strip-action"></div>
+      </div>
 
-      <button type="button" class="zone slot-knob is-locked" id="btn-knob" data-spin-step="2" style="left:16.70%;top:64.66%;width:7.81%;height:4.36%" title="拉桿轉動"></button>
-      <button type="button" class="slot-btn next-step" id="btn-upload" data-step="1" style="left:33.37%;top:64.81%;width:7.16%;height:4.00%" title="1. 請上傳照片"></button>
-      <button type="button" class="slot-btn is-idle is-locked" id="btn-spin-step" data-step="2" style="left:46.88%;top:64.81%;width:7.16%;height:4.00%" title="2. 開始"></button>
-      <div class="slot-btn" id="auto-gen" style="left:60.38%;top:64.83%;width:7.16%;height:4.00%" aria-hidden="true"></div>
+      <button type="button" class="zone slot-knob is-locked" id="btn-knob" data-spin-step="2" style="left:16.70%;top:64.66%;width:7.81%;height:4.36%" title="拉桿轉動" aria-label="拉桿轉動"></button>
+      
+      <button type="button" class="slot-btn next-step" id="btn-upload" data-step="1" style="left:33.37%;top:64.81%;width:7.16%;height:4.00%" title="1. 請上傳照片" aria-label="1. 請上傳照片"></button>
+      <button type="button" class="slot-btn is-idle is-locked" id="btn-spin-step" data-step="2" style="left:46.88%;top:64.81%;width:7.16%;height:4.00%" title="2. 開始" aria-label="2. 開始"></button>
+      <div class="slot-btn" id="auto-gen" style="left:60.38%;top:64.83%;width:7.16%;height:4.00%" title="自動生圖" aria-hidden="true"></div>
       <div class="speech-bubble is-on" id="bubble-1" data-bubble-step="1">1. 請上傳照片</div>
       <div class="speech-bubble" id="bubble-2" data-bubble-step="2">2. 開始</div>
       <button type="button" class="skip-upload" id="btn-skip-upload" style="left:16.5%;top:70.0%;">略過上傳</button>
       <input type="file" id="file-input" class="sr-only" accept="image/*">
       <div class="upload-preview" id="upload-preview" style="left:3.2%;top:69.6%;width:28%;height:4.8%">
         <img id="user-image-preview" alt="已上傳照片預覽">
-        <div class="meta"><b>已鎖定面孔</b><span id="upload-filename"></span></div>
+        <div class="meta">
+          <b>已鎖定面孔</b>
+          <span id="upload-filename"></span>
+        </div>
         <button type="button" class="linkish" id="btn-remove-photo">移除</button>
       </div>
       <section class="zone zone-history" style="left:8.2%;top:74.4%;width:83.6%;height:18.2%" aria-label="圖片歷史牆">
         <div class="history-label">圖片歷史牆 <span id="history-count">0 張</span></div>
         <div class="history-grid" id="history-grid"></div>
       </section>
+
     </div>
   </div>
+
+
+  <script>
+  /* v5: phone + height-limited → fill width and scroll vertically; otherwise v3 contain-fit */
+  (function () {
+    var AR = 1536 / 2752;
+    var MAX_W = 480;
+    var PHONE_W = 600;
+    var lastW = 0, lastH = 0, lastScroll = null;
+    function avail() {
+      var wrap = document.querySelector(".app-wrap");
+      var vv = window.visualViewport;
+      var iw = document.documentElement.clientWidth || window.innerWidth || 0;
+      var ih = document.documentElement.clientHeight || window.innerHeight || 0;
+      if (vv) {
+        if (vv.width) iw = Math.min(iw || vv.width, vv.width);
+        if (vv.height) ih = Math.min(ih || vv.height, vv.height);
+      }
+      var w = wrap ? wrap.clientWidth : 0;
+      var h = wrap ? wrap.clientHeight : 0;
+      if (!w || w < 2) w = iw;
+      if (!h || h < 2) h = ih;
+      /* Never treat the wrap's content height as the viewport (avoids mode flip when scrolling). */
+      if (ih && h > ih + 1) h = ih;
+      if (iw && w > iw + 1) w = iw;
+      return { w: w || 390, h: h || 640 };
+    }
+    function fitCabinetToViewport() {
+      var m = document.getElementById("machine");
+      if (!m) return;
+      var a = avail();
+      var phone = a.w <= PHONE_W;
+      var fillH = a.w / AR;
+      var scroll = !!(phone && fillH > a.h + 0.5);
+      var root = document.documentElement;
+      if (scroll) root.classList.add("cabinet-scroll");
+      else root.classList.remove("cabinet-scroll");
+      var w, h;
+      if (scroll) {
+        a = avail();
+        w = a.w;
+        h = w / AR;
+      } else {
+        w = Math.min(a.w, MAX_W);
+        h = w / AR;
+        if (h > a.h) {
+          h = a.h;
+          w = h * AR;
+        }
+        if (w > a.w) {
+          w = a.w;
+          h = w / AR;
+        }
+      }
+      w = Math.max(1, Math.floor(w));
+      h = Math.max(1, Math.round(w / AR));
+      if (!scroll && h > a.h) {
+        h = Math.max(1, Math.floor(a.h));
+        w = Math.max(1, Math.round(h * AR));
+      }
+      if (w === lastW && h === lastH && lastScroll === scroll) return;
+      lastW = w;
+      lastH = h;
+      lastScroll = scroll;
+      m.style.width = w + "px";
+      m.style.height = h + "px";
+      m.style.maxWidth = "none";
+      m.style.maxHeight = "none";
+      var fs = Math.max(10, Math.min(15, w * 0.0315));
+      m.style.fontSize = fs + "px";
+    }
+    window.fitCabinetToViewport = fitCabinetToViewport;
+    function bind() {
+      fitCabinetToViewport();
+      window.addEventListener("resize", fitCabinetToViewport);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", fitCabinetToViewport);
+        window.visualViewport.addEventListener("scroll", fitCabinetToViewport);
+      }
+      if (window.ResizeObserver) {
+        var ro = new ResizeObserver(function () { fitCabinetToViewport(); });
+        var wrap = document.querySelector(".app-wrap");
+        if (wrap) ro.observe(wrap);
+        ro.observe(document.documentElement);
+      }
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) fitCabinetToViewport();
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bind);
+      if (document.getElementById("machine")) fitCabinetToViewport();
+    } else {
+      bind();
+    }
+  })();
+  </script>
 
   <div id="toast" role="status"></div>
   <div id="lightbox" aria-modal="true" role="dialog">
@@ -673,7 +981,7 @@ html.cabinet-scroll .machine {
     <div class="admin-card">
       <h2>管理頁：詞庫與專案</h2>
       <div class="admin-row">
-        <select id="project-select"></select>
+        <select id="project-select" aria-label="選擇專案"></select>
         <button type="button" class="mini gold" id="btn-new-project">新增專案</button>
         <button type="button" class="mini" id="btn-rename-project">重新命名</button>
         <button type="button" class="mini danger" id="btn-delete-project">刪除專案</button>
@@ -686,14 +994,14 @@ html.cabinet-scroll .machine {
       </div>
       <div class="tabs">
         <button type="button" class="on" data-tab="outfits">穿著</button>
-        <button type="button" class="on" data-tab="locations">地點</button>
-        <button type="button" class="on" data-tab="actions">動作</button>
+        <button type="button" data-tab="locations">地點</button>
+        <button type="button" data-tab="actions">動作</button>
       </div>
       <div class="entry-list" id="entry-list"></div>
       <div class="field">
         <label id="entry-form-title">新增詞條</label>
-        <input id="entry-name" placeholder="中文名稱">
-        <textarea id="entry-prompt" rows="3" placeholder="英文提示詞"></textarea>
+        <input id="entry-name" placeholder="中文名稱，例如：花花大嬸棉質居家睡衣套裝">
+        <textarea id="entry-prompt" rows="3" placeholder="英文提示詞，例如：wearing an eccentric floral patterned pajamas lounger"></textarea>
         <div class="admin-row">
           <button type="button" class="mini gold" id="btn-save-entry">新增</button>
           <button type="button" class="mini" id="btn-cancel-entry">取消</button>
@@ -704,47 +1012,17 @@ html.cabinet-scroll .machine {
       </div>
     </div>
   </div>
-<script>
-  (function () {
-    var AR = 1536 / 2752, MAX_W = 480, PHONE_W = 600, lastW = 0, lastH = 0, lastScroll = null;
-    function avail() {
-      var wrap = document.querySelector(".app-wrap"), vv = window.visualViewport;
-      var iw = document.documentElement.clientWidth || window.innerWidth || 0;
-      var ih = document.documentElement.clientHeight || window.innerHeight || 0;
-      if (vv) { if (vv.width) iw = Math.min(iw || vv.width, vv.width); if (vv.height) ih = Math.min(ih || vv.height, vv.height); }
-      var w = (wrap && wrap.clientWidth >= 2) ? wrap.clientWidth : iw;
-      var h = (wrap && wrap.clientHeight >= 2) ? wrap.clientHeight : ih;
-      if (ih && h > ih + 1) h = ih;
-      if (iw && w > iw + 1) w = iw;
-      return { w: w || 390, h: h || 640 };
-    }
-    function fitCabinetToViewport() {
-      var m = document.getElementById("machine");
-      if (!m) return;
-      var a = avail(), phone = a.w <= PHONE_W, fillH = a.w / AR, scroll = !!(phone && fillH > a.h + 0.5);
-      document.documentElement.classList.toggle("cabinet-scroll", scroll);
-      var w, h;
-      if (scroll) { a = avail(); w = a.w; h = w / AR; }
-      else {
-        w = Math.min(a.w, MAX_W); h = w / AR;
-        if (h > a.h) { h = a.h; w = h * AR; }
-        if (w > a.w) { w = a.w; h = w / AR; }
-      }
-      w = Math.max(1, Math.floor(w)); h = Math.max(1, Math.round(w / AR));
-      if (!scroll && h > a.h) { h = Math.max(1, Math.floor(a.h)); w = Math.max(1, Math.round(h * AR)); }
-      if (w === lastW && h === lastH && lastScroll === scroll) return;
-      lastW = w; lastH = h; lastScroll = scroll;
-      m.style.width = w + "px"; m.style.height = h + "px"; m.style.maxWidth = "none"; m.style.maxHeight = "none";
-      m.style.fontSize = Math.max(10, Math.min(15, w * 0.0315)) + "px";
-    }
-    window.fitCabinetToViewport = fitCabinetToViewport;
-    window.addEventListener("resize", fitCabinetToViewport);
-    if (window.visualViewport) window.visualViewport.addEventListener("resize", fitCabinetToViewport);
-    document.addEventListener("DOMContentLoaded", fitCabinetToViewport);
-  })();
 
+  <script>
+const APP_MODE = "canvas"; // canvas | web
+const IS_CANVAS = APP_MODE === "canvas";
 let ITEM_H = 96;
-const STORAGE = { PROJECTS: "ccs_slot_projects_v1", ACTIVE: "ccs_slot_active_v1", HISTORY: "ccs_slot_history_v1" };
+const STORAGE = {
+  PROJECTS: "ccs_slot_projects_v1",
+  ACTIVE: "ccs_slot_active_v1",
+  HISTORY: "ccs_slot_history_v1"
+};
+
 const DEFAULT_BANKS = {
   outfits: [
     { name: "粉紅蕾絲芭蕾蓬蓬裙", prompt: "wearing a fluffy pink lace ballet tutu with frills" },
@@ -802,165 +1080,550 @@ const DEFAULT_BANKS = {
   ]
 };
 
-const state = {
-  store: { projects: [] }, activeId: "", current: { outfit: null, location: null, action: null },
-  currentSymbols: { outfit: null, location: null, action: null }, skippedUpload: false,
-  currentPrompt: "", currentSentence: "", isSpinning: false, isGenerating: false,
-  uploadedImageBase64: null, uploadedFileName: "", history: [], step: 1, adminTab: "outfits", editingIndex: -1
-};
-const reels = {};
-let tickTimer = null, tickIntervalMs = 50;
-const $ = id => document.getElementById(id);
-const clone = v => JSON.parse(JSON.stringify(v));
-const uid = () => "p_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
-const delay = ms => new Promise(r => setTimeout(r, ms));
-const activeProject = () => state.store.projects.find(p => p.id === state.activeId) || state.store.projects[0];
+const BANK_KEYS = [
+  { key: "outfits", label: "穿著" },
+  { key: "locations", label: "地點" },
+  { key: "actions", label: "動作" }
+];
 
+const state = {
+  store: { projects: [] },
+  activeId: "",
+  current: { outfit: null, location: null, action: null },
+      currentSymbols: { outfit: null, location: null, action: null },
+      skippedUpload: false,
+  currentPrompt: "",
+  currentSentence: "",
+  isSpinning: false,
+  isGenerating: false,
+  uploadedImageBase64: null,
+  uploadedFileName: "",
+  history: [],
+  step: IS_CANVAS ? 1 : 1,
+  adminTab: "outfits",
+  editingIndex: -1
+};
+
+const reels = {};
+let tickTimer = null;
+let tickIntervalMs = 50;
+
+function $(id) { return document.getElementById(id); }
+function clone(v) { return JSON.parse(JSON.stringify(v)); }
+function uid() { return "p_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+function activeProject() {
+  return state.store.projects.find(p => p.id === state.activeId) || state.store.projects[0];
+}
+
+/* ---------- storage ---------- */
 function loadStore() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE.PROJECTS) || "null");
-    if (raw && Array.isArray(raw.projects) && raw.projects.length) state.store = raw;
-    else resetDefaultStore();
-  } catch (e) { resetDefaultStore(); }
+    if (raw && Array.isArray(raw.projects) && raw.projects.length) {
+      state.store = raw;
+    } else {
+      resetDefaultStore();
+    }
+  } catch (e) {
+    resetDefaultStore();
+  }
   const savedId = localStorage.getItem(STORAGE.ACTIVE);
-  state.activeId = (savedId && state.store.projects.some(p => p.id === savedId)) ? savedId : state.store.projects[0].id;
-  try {
-    const h = JSON.parse(localStorage.getItem(STORAGE.HISTORY) || "[]");
-    state.history = Array.isArray(h) ? h.slice(0, 20) : [];
-  } catch (e) { state.history = []; }
+  state.activeId = (savedId && state.store.projects.some(p => p.id === savedId))
+    ? savedId
+    : state.store.projects[0].id;
+  if (IS_CANVAS) {
+    try {
+      const h = JSON.parse(localStorage.getItem(STORAGE.HISTORY) || "[]");
+      state.history = Array.isArray(h) ? h.slice(0, 20) : [];
+    } catch (e) { state.history = []; }
+  }
 }
 function resetDefaultStore() {
-  state.store = { projects: [{ id: "default", name: "經典荒謬詞庫", outfits: clone(DEFAULT_BANKS.outfits), locations: clone(DEFAULT_BANKS.locations), actions: clone(DEFAULT_BANKS.actions) }] };
+  state.store = {
+    projects: [{
+      id: "default",
+      name: "經典荒謬詞庫",
+      outfits: clone(DEFAULT_BANKS.outfits),
+      locations: clone(DEFAULT_BANKS.locations),
+      actions: clone(DEFAULT_BANKS.actions)
+    }]
+  };
 }
 function saveProjects() {
-  try { localStorage.setItem(STORAGE.PROJECTS, JSON.stringify(state.store)); localStorage.setItem(STORAGE.ACTIVE, state.activeId); return true; }
-  catch (e) { return false; }
+  try {
+    localStorage.setItem(STORAGE.PROJECTS, JSON.stringify(state.store));
+    localStorage.setItem(STORAGE.ACTIVE, state.activeId);
+    return true;
+  } catch (e) {
+    showToast("專案儲存失敗，瀏覽器空間可能已滿");
+    return false;
+  }
 }
 function saveHistory() {
+  if (!IS_CANVAS) return;
+  const key = STORAGE.HISTORY;
   let list = state.history.slice(0, 20);
   while (true) {
-    try { localStorage.setItem(STORAGE.HISTORY, JSON.stringify(list)); state.history = list; return true; }
-    catch (e) { if (list.length <= 1) return false; list = list.slice(0, list.length - 1); }
+    try {
+      localStorage.setItem(key, JSON.stringify(list));
+      state.history = list;
+      return true;
+    } catch (e) {
+      if (list.length <= 1) {
+        try { localStorage.removeItem(key); } catch (e2) {}
+        showToast("歷史牆儲存空間不足，無法寫入這張圖");
+        return false;
+      }
+      list = list.slice(0, list.length - 1);
+    }
   }
 }
 
+
+/* ---------- audio (WebAudio, synthesized, no copyrighted samples) ---------- */
 const AudioEng = {
-  ctx: null, muted: false, unlocked: false, bgTimer: null, master: null, bgGain: null, sfxGain: null,
+  ctx: null,
+  muted: false,
+  unlocked: false,
+  bgTimer: null,
+  spinNodes: null,
+  master: null,
+  bgGain: null,
+  sfxGain: null,
   init() {
     if (this.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     this.ctx = new AC();
-    this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
-    this.bgGain = this.ctx.createGain(); this.bgGain.gain.value = 0.18; this.bgGain.connect(this.master);
-    this.sfxGain = this.ctx.createGain(); this.sfxGain.gain.value = 0.42; this.sfxGain.connect(this.master);
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 1;
+    this.master.connect(this.ctx.destination);
+    this.bgGain = this.ctx.createGain();
+    this.bgGain.gain.value = 0.18;
+    this.bgGain.connect(this.master);
+    this.sfxGain = this.ctx.createGain();
+    this.sfxGain.gain.value = 0.42;
+    this.sfxGain.connect(this.master);
   },
   async unlock() {
     this.init();
     if (!this.ctx) return;
-    if (this.ctx.state === "suspended") { try { await this.ctx.resume(); } catch (e) {} }
+    if (this.ctx.state === "suspended") {
+      try { await this.ctx.resume(); } catch (e) {}
+    }
     this.unlocked = true;
     if (!this.muted) this.startBGM();
     this.syncMuteBtn();
   },
   syncMuteBtn() {
-    const btn = $("btn-mute"); if (!btn) return;
+    const btn = $("btn-mute");
+    if (!btn) return;
     btn.setAttribute("aria-pressed", this.muted ? "true" : "false");
     btn.textContent = this.muted ? "✕" : "♪";
+    btn.title = this.muted ? "開啟聲音" : "關閉聲音";
   },
   setMuted(m) {
     this.muted = !!m;
     if (this.master) this.master.gain.value = this.muted ? 0 : 1;
     this.syncMuteBtn();
     if (!this.muted && this.unlocked) this.startBGM();
-    if (this.muted) this.stopBGM();
+    if (this.muted) { this.stopBGM(); this.stopSpinLoop(); }
   },
-  toggleMute() { this.setMuted(!this.muted); },
+  toggleMute() {
+    this.setMuted(!this.muted);
+  },
   osc(type, freq, dur, gain, dest, at, slide) {
     if (!this.ctx || this.muted) return;
-    const t = at != null ? at : this.ctx.currentTime, o = this.ctx.createOscillator(), g = this.ctx.createGain();
-    o.type = type; o.frequency.setValueAtTime(freq, t);
+    const t = at != null ? at : this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
     if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, slide), t + dur);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(dest || this.sfxGain); o.start(t); o.stop(t + dur + 0.03);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || this.sfxGain);
+    o.start(t); o.stop(t + dur + 0.03);
+    return o;
   },
   noise(dur, gain, dest, at, freq, type, Q) {
     if (!this.ctx || this.muted) return;
-    const t = at != null ? at : this.ctx.currentTime, n = this.ctx.sampleRate, buf = this.ctx.createBuffer(1, Math.max(1, Math.floor(n * dur)), n), d = buf.getChannelData(0);
+    const t = at != null ? at : this.ctx.currentTime;
+    const n = this.ctx.sampleRate;
+    const buf = this.ctx.createBuffer(1, Math.max(1, Math.floor(n * dur)), n);
+    const d = buf.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    const src = this.ctx.createBufferSource(); src.buffer = buf;
-    const f = this.ctx.createBiquadFilter(); f.type = type || "bandpass"; f.frequency.value = freq || 1800; f.Q.value = Q || 1.2;
-    const g = this.ctx.createGain(); g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(f); f.connect(g); g.connect(dest || this.sfxGain); src.start(t); src.stop(t + dur + 0.02);
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+    const f = this.ctx.createBiquadFilter();
+    f.type = type || "bandpass";
+    f.frequency.value = freq || 1800;
+    f.Q.value = Q || 1.2;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(dest || this.sfxGain);
+    src.start(t); src.stop(t + dur + 0.02);
   },
-  startWhoosh() { this.noise(0.22, 0.55, this.sfxGain, null, 400, "lowpass", 0.7); this.osc("sawtooth", 140, 0.28, 0.28, this.sfxGain, null, 520); },
-  tick() { this.noise(0.014, 0.16, this.sfxGain, null, 2600, "bandpass", 1.4); },
-  clunk(i) { const base = 150 - (i || 0) * 18; this.osc("sine", base, 0.22, 0.7, this.sfxGain, null, 48); this.noise(0.07, 0.45, this.sfxGain, null, 700, "lowpass", 0.8); },
-  jackpot() {
+  startWhoosh() {
+    if (!this.ctx || this.muted) return;
+    const t = this.ctx.currentTime;
+    this.noise(0.22, 0.55, this.sfxGain, t, 400, "lowpass", 0.7);
+    this.noise(0.18, 0.4, this.sfxGain, t, 2200, "bandpass", 0.8);
+    this.osc("sawtooth", 140, 0.28, 0.28, this.sfxGain, t, 520);
+    this.osc("square", 90, 0.16, 0.22, this.sfxGain, t);
+    this.osc("square", 240, 0.08, 0.12, this.sfxGain, t + 0.12);
+  },
+  startSpinLoop() {
+    this.stopSpinLoop();
+    if (!this.ctx || this.muted) return;
+    const ctx = this.ctx;
+    const dur = 1;
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.9;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.value = 980;
+    bp.Q.value = 0.85;
+    const g = ctx.createGain();
+    g.gain.value = 0.2;
+    const lfo = ctx.createOscillator();
+    lfo.type = "triangle";
+    lfo.frequency.value = 16;
+    const lfoG = ctx.createGain();
+    lfoG.gain.value = 0.07;
+    lfo.connect(lfoG);
+    lfoG.connect(g.gain);
+    src.connect(bp); bp.connect(g); g.connect(this.sfxGain);
+    src.start();
+    lfo.start();
+    this.spinNodes = { src, lfo, g };
+  },
+  stopSpinLoop() {
+    if (!this.spinNodes) return;
+    try { this.spinNodes.src.stop(); } catch (e) {}
+    try { this.spinNodes.lfo.stop(); } catch (e) {}
+    this.spinNodes = null;
+  },
+  tick() {
+    if (!this.ctx || this.muted) return;
+    this.noise(0.014, 0.16, this.sfxGain, null, 2600, "bandpass", 1.4);
+    this.osc("square", 2100 + Math.random() * 700, 0.016, 0.035);
+  },
+  clunk(index) {
+    if (!this.ctx || this.muted) return;
+    const t = this.ctx.currentTime;
+    const base = 150 - (index || 0) * 18;
+    this.osc("sine", base, 0.22, 0.7, this.sfxGain, t, 48);
+    this.osc("triangle", base * 0.5, 0.18, 0.45, this.sfxGain, t, 36);
+    this.osc("square", 420 + (index || 0) * 40, 0.05, 0.12, this.sfxGain, t);
+    this.noise(0.07, 0.45, this.sfxGain, t, 700, "lowpass", 0.8);
+    this.noise(0.04, 0.28, this.sfxGain, t, 2400, "bandpass", 1.2);
+  },
+  jingle() {
     if (!this.ctx || this.muted) return;
     const t0 = this.ctx.currentTime;
-    [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568].forEach((f, i) => this.osc("square", f, 0.18, 0.14, this.sfxGain, t0 + i * 0.07));
+    const notes = [523.25, 659.25, 783.99, 987.77, 1046.5, 783.99, 1046.5, 1318.5];
+    notes.forEach((f, i) => {
+      const t = t0 + i * 0.08;
+      this.osc("square", f, 0.14, 0.12, this.sfxGain, t);
+      this.osc("triangle", f * 2, 0.12, 0.06, this.sfxGain, t);
+    });
+  },
+  fanfare() {
+    if (!this.ctx || this.muted) return;
+    const t0 = this.ctx.currentTime;
+    const notes = [
+      392, 523.25, 659.25, 783.99,
+      659.25, 783.99, 987.77, 1046.5,
+      987.77, 1174.7, 1318.5, 1568
+    ];
+    notes.forEach((f, i) => {
+      const t = t0 + i * 0.07;
+      this.osc("sawtooth", f, 0.22, 0.16, this.sfxGain, t);
+      this.osc("square", f * 0.5, 0.2, 0.08, this.sfxGain, t);
+    });
+    this.osc("triangle", 523.25, 1.4, 0.12, this.sfxGain, t0, 1046.5);
+  },
+  cheer() {
+    if (!this.ctx || this.muted) return;
+    const t0 = this.ctx.currentTime;
+    for (let i = 0; i < 8; i++) {
+      this.noise(0.35 + Math.random() * 0.2, 0.16, this.sfxGain, t0 + i * 0.09, 1800 + Math.random() * 900, "bandpass", 0.7);
+    }
+    this.noise(1.1, 0.14, this.sfxGain, t0, 1200, "bandpass", 0.5);
+  },
+  coins() {
+    if (!this.ctx || this.muted) return;
+    const t0 = this.ctx.currentTime;
+    for (let i = 0; i < 18; i++) {
+      const t = t0 + 0.12 + i * 0.055 + Math.random() * 0.02;
+      const f = 1400 + Math.random() * 1600;
+      this.osc("sine", f, 0.12, 0.1, this.sfxGain, t);
+      this.osc("triangle", f * 1.5, 0.08, 0.05, this.sfxGain, t);
+    }
+  },
+  jackpot() {
+    this.jingle();
+    this.fanfare();
+    this.cheer();
+    this.coins();
   },
   startBGM() {
     if (!this.ctx || this.muted || this.bgTimer) return;
-    const tempo = 0.2, melody = [[0,392],[1,493.88],[2,587.33],[3,493.88],[4,392],[5,440],[6,523.25],[7,440]];
-    const sched = () => { if (this.ctx && !this.muted) { const t0 = this.ctx.currentTime + 0.02; melody.forEach(([i, f]) => this.osc("square", f, 0.16, 0.05, this.bgGain, t0 + i * tempo)); } };
-    sched(); this.bgTimer = setInterval(sched, 8 * tempo * 1000);
+    const tempo = 0.2;
+    const melody = [
+      [0, 392], [1, 493.88], [2, 587.33], [3, 493.88],
+      [4, 392], [5, 440], [6, 523.25], [7, 440],
+      [8, 392], [9, 493.88], [10, 587.33], [11, 659.25],
+      [12, 587.33], [13, 523.25], [14, 493.88], [15, 440]
+    ];
+    const bass = [98, 98, 130.81, 130.81, 87.31, 87.31, 110, 110, 98, 98, 130.81, 130.81, 87.31, 87.31, 110, 123.47];
+    const sched = () => {
+      if (!this.ctx || this.muted) return;
+      const t0 = this.ctx.currentTime + 0.02;
+      melody.forEach(([i, f]) => {
+        this.osc("square", f, 0.16, 0.07, this.bgGain, t0 + i * tempo);
+        this.osc("triangle", f * 2, 0.12, 0.03, this.bgGain, t0 + i * tempo);
+      });
+      bass.forEach((f, i) => {
+        this.osc("triangle", f, 0.22, 0.11, this.bgGain, t0 + i * tempo);
+      });
+      for (let i = 0; i < 16; i += 2) {
+        this.noise(0.04, 0.05, this.bgGain, t0 + i * tempo, 4000, "highpass", 0.6);
+      }
+    };
+    sched();
+    this.bgTimer = setInterval(sched, 16 * tempo * 1000);
   },
-  stopBGM() { if (this.bgTimer) { clearInterval(this.bgTimer); this.bgTimer = null; } }
+  stopBGM() {
+    if (this.bgTimer) { clearInterval(this.bgTimer); this.bgTimer = null; }
+  }
 };
 
 const JackpotFX = {
+  canvas: null,
+  ctx: null,
+  parts: [],
+  raf: 0,
+  until: 0,
+  cap: 140,
+  ensure() {
+    const c = $("fx-layer");
+    const m = $("machine");
+    if (!c || !m) return null;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = m.clientWidth;
+    const h = m.clientHeight;
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) {
+      c.width = Math.round(w * dpr);
+      c.height = Math.round(h * dpr);
+      c.style.width = w + "px";
+      c.style.height = h + "px";
+    }
+    this.canvas = c;
+    this.ctx = c.getContext("2d");
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return this.ctx;
+  },
+  burst() {
+    const m = $("machine");
+    if (!m) return;
+    const w = m.clientWidth, h = m.clientHeight;
+    const colors = ["#ffd24a","#ff4a4a","#ffeaa0","#3ef0ff","#ff7ad9","#7cff6a","#fff","#ff9a2a"];
+    const origins = [
+      { x: w * 0.268, y: h * 0.502 },
+      { x: w * 0.502, y: h * 0.502 },
+      { x: w * 0.736, y: h * 0.502 }
+    ];
+    const need = this.cap - this.parts.length;
+    for (let i = 0; i < need; i++) {
+      const o = origins[i % 3];
+      const ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.15;
+      const sp = 180 + Math.random() * 280;
+      this.parts.push({
+        x: o.x, y: o.y,
+        vx: Math.cos(ang) * sp * (0.4 + Math.random()),
+        vy: Math.sin(ang) * sp,
+        w: 4 + Math.random() * 6,
+        h: 7 + Math.random() * 10,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 8,
+        color: colors[i % colors.length],
+        life: 1,
+        g: 360 + Math.random() * 160
+      });
+    }
+  },
   start() {
-    const machine = $("machine"); if (machine) machine.classList.add("is-jackpot");
-    const banner = $("jackpot-banner"); if (banner) { banner.classList.remove("show"); void banner.offsetWidth; banner.classList.add("show"); }
-    setTimeout(() => { if (machine) machine.classList.remove("is-jackpot"); }, 4200);
+    const machine = $("machine");
+    if (machine) machine.classList.add("is-jackpot");
+    const banner = $("jackpot-banner");
+    if (banner) {
+      banner.classList.remove("show");
+      void banner.offsetWidth;
+      banner.classList.add("show");
+    }
+    this.parts = [];
+    this.ensure();
+    this.burst();
+    this.until = performance.now() + 4200;
+    if (this.raf) cancelAnimationFrame(this.raf);
+    let last = performance.now();
+    const loop = (now) => {
+      const ctx = this.ensure();
+      if (!ctx) return;
+      const w = this.canvas.clientWidth || $("machine").clientWidth;
+      const h = this.canvas.clientHeight || $("machine").clientHeight;
+      const dt = Math.min(0.04, (now - last) / 1000);
+      last = now;
+      ctx.clearRect(0, 0, w, h);
+      if (now < this.until) {
+        const pulse = 0.35 + 0.35 * Math.abs(Math.sin(now / 90));
+        ctx.fillStyle = "rgba(255, 210, 60, " + (pulse * 0.12) + ")";
+        ctx.fillRect(0, 0, w, h);
+      }
+      const next = [];
+      for (const p of this.parts) {
+        p.vy += p.g * dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.rot += p.vr * dt;
+        p.life -= dt * 0.13;
+        if (p.y > h + 20 || p.life <= 0) continue;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+        next.push(p);
+      }
+      this.parts = next;
+      if (this.parts.length || now < this.until) {
+        this.raf = requestAnimationFrame(loop);
+      } else {
+        this.stop(false);
+      }
+    };
+    this.raf = requestAnimationFrame(loop);
+    clearTimeout(this._tid);
+    this._tid = setTimeout(() => this.stop(true), 4500);
+  },
+  stop(clearClass) {
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; }
+    if (this.ctx && this.canvas) {
+      const w = this.canvas.clientWidth || 0;
+      const h = this.canvas.clientHeight || 0;
+      this.ctx.clearRect(0, 0, w, h);
+    }
+    this.parts = [];
+    if (clearClass !== false) {
+      const machine = $("machine");
+      if (machine) machine.classList.remove("is-jackpot");
+    }
   }
 };
 
-function startTicks(ms) { stopTicks(); tickIntervalMs = ms; const loop = () => { AudioEng.tick(); tickTimer = setTimeout(loop, tickIntervalMs); }; loop(); }
-function stopTicks() { if (tickTimer) { clearTimeout(tickTimer); tickTimer = null; } }
+function startTicks(ms) {
+  stopTicks();
+  tickIntervalMs = ms;
+  const loop = () => {
+    AudioEng.tick();
+    tickTimer = setTimeout(loop, tickIntervalMs);
+  };
+  loop();
+}
+function stopTicks() {
+  if (tickTimer) { clearTimeout(tickTimer); tickTimer = null; }
+}
 
+/* ---------- reels (classic symbols, not sentence text) ---------- */
 const SYMBOLS = ["seven","bar","bar2","bar3","cherry","bell","lemon","grape","melon","star","diamond","orange"];
-function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function measureItemH() { const vp = $("viewport-outfit"); return vp ? Math.max(24, Math.round(vp.getBoundingClientRect().height)) : 96; }
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function measureItemH() {
+  const vp = $("viewport-outfit");
+  if (!vp) return 96;
+  const h = Math.round(vp.getBoundingClientRect().height);
+  return Math.max(24, h);
+}
+
 function initReels() {
   ITEM_H = measureItemH();
-  ["outfit", "location", "action"].forEach(key => {
-    const el = $("strip-" + key), items = shuffle(SYMBOLS);
-    reels[key] = { el, offset: 0, speed: 0, spinning: false, raf: 0, items, total: 0, cycle: 0 };
+  ["outfit", "location", "action"].forEach((key) => {
+    const el = $("strip-" + key);
+    const items = shuffle(SYMBOLS);
+    reels[key] = { el, offset: 0, speed: 0, spinning: false, raf: 0, items: items, total: 0, cycle: 0 };
     buildStrip(key);
-    snapReelTo(key, (state.currentSymbols && state.currentSymbols[key]) || items[0]);
+    const land = (state.currentSymbols && state.currentSymbols[key]) || items[0];
+    snapReelTo(key, land);
   });
 }
 function snapReelTo(key, symbolId) {
-  const r = reels[key]; if (!r) return;
-  let idx = Math.max(0, r.items.indexOf(symbolId));
-  const dest = idx * ITEM_H + ITEM_H * r.cycle * 2;
-  r.offset = dest; r.el.style.transform = "translateY(" + (-dest) + "px)";
-  r.el.parentElement.classList.add("landed"); r.el.parentElement.classList.remove("spinning");
+  const r = reels[key];
+  if (!r || !r.items || !r.items.length) return;
+  let targetIndex = r.items.indexOf(symbolId);
+  if (targetIndex < 0) targetIndex = 0;
+  const dest = targetIndex * ITEM_H + ITEM_H * r.cycle * 2;
+  r.offset = dest;
+  r.el.style.transform = "translateY(" + (-dest) + "px)";
+  r.el.parentElement.classList.add("landed");
+  r.el.parentElement.classList.remove("spinning");
 }
 function buildStrip(key) {
-  const r = reels[key], items = r.items; r.el.innerHTML = "";
-  const copies = Math.max(14, Math.ceil(48 / items.length));
+  const r = reels[key];
+  const items = r.items;
+  r.el.innerHTML = "";
+  const copies = Math.max(14, Math.ceil(48 / Math.max(1, items.length)));
+  const list = items.length ? items : ["star"];
   for (let c = 0; c < copies; c++) {
-    items.forEach(id => {
-      const d = document.createElement("div"); d.className = "reel-item"; d.style.height = ITEM_H + "px";
-      d.innerHTML = '<svg viewBox="0 0 100 100"><use href="#sym-' + id + '"></use></svg>';
+    list.forEach(id => {
+      const d = document.createElement("div");
+      d.className = "reel-item";
+      d.style.height = ITEM_H + "px";
+      d.dataset.symbol = id;
+      d.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#sym-' + id + '"></use></svg>';
       r.el.appendChild(d);
     });
   }
-  r.total = items.length * copies; r.cycle = items.length;
+  r.total = list.length * copies;
+  r.cycle = list.length;
+  r.offset = 0;
+  r.el.style.transform = "translateY(0px)";
+  r.el.parentElement.classList.remove("spinning", "landed");
 }
 function startReelSpin(key) {
-  const r = reels[key]; r.spinning = true; r.speed = 2600 + Math.random() * 500;
-  r.el.parentElement.classList.add("spinning"); r.el.parentElement.classList.remove("landed");
+  const r = reels[key];
+  r.spinning = true;
+  r.speed = 2600 + Math.random() * 500;
+  r.el.parentElement.classList.add("spinning");
+  r.el.parentElement.classList.remove("landed");
   let last = performance.now();
-  const loop = now => {
+  const loop = (now) => {
     if (!r.spinning) return;
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    r.offset = (r.offset + r.speed * dt) % (ITEM_H * r.total);
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    const loopLen = ITEM_H * r.total;
+    r.offset = (r.offset + r.speed * dt) % loopLen;
     r.el.style.transform = "translateY(" + (-r.offset) + "px)";
     r.raf = requestAnimationFrame(loop);
   };
@@ -968,222 +1631,872 @@ function startReelSpin(key) {
 }
 function stopReel(key, symbolId) {
   return new Promise(resolve => {
-    const r = reels[key]; r.spinning = false; if (r.raf) cancelAnimationFrame(r.raf);
+    const r = reels[key];
+    r.spinning = false;
+    if (r.raf) cancelAnimationFrame(r.raf);
     r.el.parentElement.classList.remove("spinning");
-    let idx = Math.max(0, r.items.indexOf(symbolId)), loopOne = ITEM_H * r.cycle, current = r.offset, dest = idx * ITEM_H;
+    const n = Math.max(1, r.cycle);
+    let targetIndex = r.items.indexOf(symbolId);
+    if (targetIndex < 0) targetIndex = 0;
+    const loopOne = ITEM_H * n;
+    const current = r.offset;
+    let dest = targetIndex * ITEM_H;
     while (dest < current + loopOne * 0.45) dest += loopOne;
-    if (dest > ITEM_H * (r.total - 1)) dest = idx * ITEM_H + loopOne * 2;
-    const start = current, dist = dest - start, dur = 560, t0 = performance.now();
-    const ease = t => 1 + 2.70158 * Math.pow(t - 1, 3) + 1.70158 * Math.pow(t - 1, 2);
-    const anim = now => {
+    const maxOff = ITEM_H * r.total - ITEM_H;
+    if (dest > maxOff) dest = targetIndex * ITEM_H + loopOne * Math.max(0, Math.floor((r.total / n) - 3));
+    const start = current;
+    const dist = dest - start;
+    const dur = 560;
+    const t0 = performance.now();
+    const easeOutBack = (t) => {
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+    };
+    const anim = (now) => {
       const t = Math.min(1, (now - t0) / dur);
-      r.offset = start + dist * ease(t); r.el.style.transform = "translateY(" + (-r.offset) + "px)";
-      if (t < 1) requestAnimationFrame(anim);
-      else { r.offset = dest; r.el.style.transform = "translateY(" + (-dest) + "px)"; r.el.parentElement.classList.add("landed"); resolve(); }
+      r.offset = start + dist * easeOutBack(t);
+      r.el.style.transform = "translateY(" + (-r.offset) + "px)";
+      if (t < 1) {
+        requestAnimationFrame(anim);
+      } else {
+        r.offset = dest;
+        r.el.style.transform = "translateY(" + (-dest) + "px)";
+        r.el.parentElement.classList.add("landed");
+        resolve();
+      }
     };
     requestAnimationFrame(anim);
   });
 }
 
-function setSpinEnabled(on) { ["btn-knob", "btn-spin-step"].forEach(id => { if ($(id)) $(id).disabled = !on; }); }
-function showLcd(on) { const el = document.querySelector(".zone-lcd"); if (el) el.classList.toggle("is-revealed", !!on); }
-function syncHistoryWall() { const el = document.querySelector(".zone-history"); if (el) el.classList.toggle("is-revealed", state.history.length > 0); }
+function setSpinEnabled(on) {
+  ["btn-spin", "btn-knob", "btn-spin-step"].forEach(id => {
+    const el = $(id);
+    if (el) el.disabled = !on;
+  });
+}
+
+/* ---------- prompt / sentence ---------- */
+function scrollZoneIntoView(el, block) {
+  if (!el) return;
+  try {
+    el.scrollIntoView({ behavior: "smooth", block: block || "center", inline: "nearest" });
+  } catch (err) {
+    try { el.scrollIntoView(); } catch (e2) {}
+  }
+}
+function showLcd(on) {
+  const el = document.querySelector(".zone-lcd");
+  if (el) el.classList.toggle("is-revealed", !!on);
+  if (on && el) scrollZoneIntoView(el, "nearest");
+}
+function syncHistoryWall(forceWebHint) {
+  const el = document.querySelector(".zone-history");
+  if (!el) return;
+  const show = (IS_CANVAS && state.history && state.history.length > 0)
+    || (!IS_CANVAS && !!forceWebHint);
+  el.classList.toggle("is-revealed", show);
+}
+
+function revealSentence(which) {
+  const el = $("sentence");
+  if (!el) return;
+  if (which < 3) {
+    // Keep original LCD artwork visible until the full sentence is ready.
+    return;
+  }
+  const { outfit, location, action } = state.current;
+  if (!outfit || !location || !action) return;
+  buildOutputs();
+  showLcd(true);
+  if (!IS_CANVAS) syncHistoryWall(true);
+}
 
 function buildOutputs() {
   const { outfit, location, action } = state.current;
   if (!outfit || !location || !action) return;
-  state.currentSentence = "今天身穿【" + outfit.name + "】，在【" + location.name + "】，【" + action.name + "】！";
-  $("sentence").innerHTML = '今天身穿【<span class="hl">' + esc(outfit.name) + '</span>】，在【<span class="hl">' + esc(location.name) + '</span>】，【<span class="hl">' + esc(action.name) + '</span>】！';
-  state.currentPrompt = "Candid authentic smartphone snapshot of a Taiwanese person " + outfit.prompt + ", " + location.prompt + ", actively " + action.prompt + ", natural lighting, unposed real life photo, 8k photorealistic";
+  const sentence = "今天身穿【" + outfit.name + "】，在【" + location.name + "】，【" + action.name + "】！";
+  state.currentSentence = sentence;
+  $("sentence").innerHTML = "今天身穿【<span class=\"hl\">" + esc(outfit.name) + "</span>】，在【<span class=\"hl\">" + esc(location.name) + "</span>】，【<span class=\"hl\">" + esc(action.name) + "</span>】！";
+
+  let englishPrompt;
+  if (IS_CANVAS && state.uploadedImageBase64) {
+    englishPrompt = "A casual, authentic phone camera snapshot of the exact person from the uploaded reference image, strictly preserving facial identity, natural skin texture, eye shape and original features. The person is " + outfit.prompt + ", " + location.prompt + ", actively " + action.prompt + ". Realistic candid photography, natural ambient lighting, candid unposed moment, subtle sea breeze or environment air, imperfect phone camera framing, 8k resolution, authentic everyday snapshot, photorealistic.";
+  } else {
+    englishPrompt = "A casual, authentic phone camera snapshot of a person. The subject is " + outfit.prompt + ", " + location.prompt + ", actively " + action.prompt + ". Realistic candid photography, natural ambient lighting, authentic everyday life snapshot, unposed, natural expressions, 8k resolution, cinematic color depth, photorealistic.";
+  }
+  state.currentPrompt = englishPrompt;
 }
 
 function copyCurrentPrompt() {
-  if (!state.currentPrompt) { showToast("請先拉桿抽出造句"); return; }
-  navigator.clipboard?.writeText(state.currentPrompt).then(() => showToast("提示詞已複製至剪貼簿！"));
+  const promptText = state.currentPrompt;
+  if (!promptText) {
+    showToast("請先拉桿抽出造句，再複製提示詞");
+    return;
+  }
+  const done = () => {
+    const btn = $("btn-copy");
+    const label = $("copy-btn-text");
+    btn.classList.add("copied");
+    label.textContent = "已複製！";
+    setTimeout(() => { btn.classList.remove("copied"); label.textContent = "複製提示詞"; }, 2000);
+    showToast("提示詞已複製至剪貼簿！");
+    if (!IS_CANVAS) setStep(1);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(promptText).then(done).catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
+  function fallbackCopy() {
+    const tempInput = document.createElement("textarea");
+    tempInput.value = promptText;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    done();
+  }
 }
 
-function canvasReadyToSpin() { return !!state.uploadedImageBase64 || !!state.skippedUpload; }
+/* ---------- steps ---------- */
+function canvasReadyToSpin() {
+  return !IS_CANVAS || !!state.uploadedImageBase64 || !!state.skippedUpload;
+}
+
 function setStep(n) {
   state.step = n;
   document.querySelectorAll("[data-step]").forEach(el => {
     const s = Number(el.getAttribute("data-step"));
-    el.classList.toggle("next-step", s === n); el.classList.toggle("is-idle", s !== n);
+    el.classList.toggle("next-step", s === n);
+    el.classList.toggle("is-idle", s !== n);
   });
-  document.querySelectorAll(".speech-bubble").forEach(el => el.classList.toggle("is-on", Number(el.getAttribute("data-bubble-step")) === n));
-  const ready = canvasReadyToSpin(), spinOn = n === 2 && ready;
-  if ($("btn-knob")) { $("btn-knob").classList.toggle("next-step", spinOn); $("btn-knob").classList.toggle("is-locked", !ready); }
-  if ($("btn-spin-step")) { $("btn-spin-step").classList.toggle("next-step", spinOn); $("btn-spin-step").classList.toggle("is-idle", !spinOn); $("btn-spin-step").classList.toggle("is-locked", !ready); }
-  if ($("btn-skip-upload")) $("btn-skip-upload").classList.toggle("hidden", ready || n !== 1);
+  document.querySelectorAll(".speech-bubble").forEach(el => {
+    const s = Number(el.getAttribute("data-bubble-step"));
+    el.classList.toggle("is-on", s === n);
+  });
+  const knob = $("btn-knob");
+  const spinBtn = $("btn-spin-step");
+  if (IS_CANVAS) {
+    const ready = canvasReadyToSpin();
+    const spinOn = n === 2 && ready;
+    if (knob) {
+      knob.classList.toggle("next-step", spinOn);
+      knob.classList.toggle("is-locked", !ready);
+    }
+    if (spinBtn) {
+      spinBtn.classList.toggle("next-step", spinOn);
+      spinBtn.classList.toggle("is-idle", !spinOn);
+      spinBtn.classList.toggle("is-locked", !ready);
+    }
+    const skip = $("btn-skip-upload");
+    if (skip) skip.classList.toggle("hidden", ready || n !== 1);
+  } else if (knob) {
+    const on = n === 1;
+    knob.classList.toggle("next-step", on);
+    knob.classList.remove("is-locked");
+  }
 }
 
+/* ---------- spin ---------- */
 async function triggerSpin() {
   if (state.isSpinning || state.isGenerating) return;
   const p = activeProject();
-  if (!canvasReadyToSpin()) { showToast("請先上傳照片，或點「略過上傳」"); return; }
-
+  if (!p.outfits.length || !p.locations.length || !p.actions.length) {
+    showToast("請先在管理頁為三個欄位各加入至少一條詞");
+    openAdmin();
+    return;
+  }
+  if (IS_CANVAS && !canvasReadyToSpin()) {
+    showToast("請先上傳照片，或點「略過上傳」");
+    return;
+  }
   await AudioEng.unlock();
-  state.isSpinning = true; setStep(2); setSpinEnabled(false);
-  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-  state.current = { outfit: pick(p.outfits), location: pick(p.locations), action: pick(p.actions) };
-  state.currentSymbols = { outfit: "seven", location: "seven", action: "seven" };
+  state.isSpinning = true;
+  setStep(IS_CANVAS ? 2 : 1);
+  setSpinEnabled(false);
+  scrollZoneIntoView($("viewport-location") || $("viewport-outfit") || document.querySelector(".reel-window"), "center");
+
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const picks = {
+    outfit: pick(p.outfits),
+    location: pick(p.locations),
+    action: pick(p.actions)
+  };
+  state.current = picks;
+  state.currentPrompt = "";
+  state.currentSentence = "";
+  state.currentSymbols = {
+    outfit: "seven",
+    location: "seven",
+    action: "seven"
+  };
+  revealSentence(0);
 
   AudioEng.startWhoosh();
-  ["outfit", "location", "action"].forEach(startReelSpin);
+  ["outfit", "location", "action"].forEach(k => startReelSpin(k));
+  AudioEng.startSpinLoop();
   startTicks(46);
-  await delay(1400); await stopReel("outfit", "seven"); AudioEng.clunk(0); tickIntervalMs = 90;
-  await delay(900); await stopReel("location", "seven"); AudioEng.clunk(1); tickIntervalMs = 150;
-  await delay(900); await stopReel("action", "seven"); AudioEng.clunk(2); stopTicks();
-  AudioEng.jackpot(); JackpotFX.start();
 
-  buildOutputs(); showLcd(true);
-  state.isSpinning = false; setSpinEnabled(true); setStep(3);
-  generateAIImage();
+  await delay(1600);
+  await stopReel("outfit", state.currentSymbols.outfit);
+  AudioEng.clunk(0);
+  tickIntervalMs = 90;
+  revealSentence(1);
+
+  await delay(1000);
+  await stopReel("location", state.currentSymbols.location);
+  AudioEng.clunk(1);
+  tickIntervalMs = 150;
+  revealSentence(2);
+
+  await delay(1000);
+  await stopReel("action", state.currentSymbols.action);
+  AudioEng.clunk(2);
+  stopTicks();
+  AudioEng.stopSpinLoop();
+  AudioEng.jackpot();
+  JackpotFX.start();
+
+  revealSentence(3);
+  state.isSpinning = false;
+  setSpinEnabled(true);
+  showToast("已解鎖今日荒謬組合！");
+
+  if (IS_CANVAS) {
+    setStep(3);
+    generateAIImage();
+  } else {
+    setStep(2);
+  }
 }
 
-/* ---------- 免 API Key 即時生圖引擎 ---------- */
-function generateAIImage() {
-  if (state.isGenerating || state.isSpinning || !state.currentPrompt) return;
+/* ---------- Canvas image generation ---------- */
+async function generateAIImage() {
+  if (!IS_CANVAS) return;
+  if (state.isGenerating || state.isSpinning) return;
+  if (!state.currentPrompt) return;
   state.isGenerating = true;
   setPreview("loading");
+  setStep(3);
 
-  const seed = Math.floor(Math.random() * 9999999);
-  const encodedPrompt = encodeURIComponent(state.currentPrompt);
-  const imgUrl = "https://image.pollinations.ai/prompt/" + encodedPrompt + "?width=720&height=1280&seed=" + seed + "&nologo=true&model=flux";
+  const promptText = state.currentPrompt;
+  const apiKey = "";
+  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=" + apiKey;
 
-  const loader = new Image();
-  loader.crossOrigin = "anonymous";
-  loader.onload = () => {
-    let finalUrl = imgUrl;
+  try {
+    let payload = null;
+    if (state.uploadedImageBase64) {
+      const base64Data = state.uploadedImageBase64.split(",")[1];
+      const mimeType = state.uploadedImageBase64.split(";")[0].split(":")[1] || "image/png";
+      payload = {
+        contents: [{
+          role: "user",
+          parts: [
+            { text: "Strictly reference the facial features, eyes, and likeness of the person in this uploaded image, maintaining exact character identity and realism: " + promptText },
+            { inlineData: { mimeType: mimeType, data: base64Data } }
+          ]
+        }],
+        generationConfig: {
+          responseModalities: ["TEXT", "IMAGE"],
+          imageConfig: { aspectRatio: "9:16" }
+        }
+      };
+    } else {
+      payload = {
+        contents: [{ role: "user", parts: [{ text: promptText }] }],
+        generationConfig: {
+          responseModalities: ["IMAGE"],
+          imageConfig: { aspectRatio: "9:16" }
+        }
+      };
+    }
+
+    const response = await fetchWithRetry(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+
+    let imageBase64Output = null;
+    const candidates = result.candidates;
+    if (candidates && candidates.length > 0) {
+      const parts = candidates[0].content && candidates[0].content.parts || [];
+      const imgPart = parts.find(p => p.inlineData && p.inlineData.data);
+      if (imgPart) {
+        const mime = imgPart.inlineData.mimeType || "image/png";
+        imageBase64Output = "data:" + mime + ";base64," + imgPart.inlineData.data;
+      }
+    }
+    if (!imageBase64Output) {
+      throw new Error((result.error && result.error.message) || "未收到有效的影像數據回傳");
+    }
+    renderGeneratedResult(imageBase64Output);
+    showToast("🎉 AI 生圖成功！已同頁面展示！");
+  } catch (error) {
+    console.error("Image generation error:", error);
+    handleGenerationFallback(promptText);
+  } finally {
+    state.isGenerating = false;
+    setStep(2);
+  }
+}
+
+function fetchWithRetry(url, options, retries, delayMs) {
+  if (retries == null) retries = 2;
+  if (delayMs == null) delayMs = 1500;
+  return (async function attempt() {
     try {
-      const c = document.createElement("canvas");
-      c.width = 720; c.height = 1280;
-      c.getContext("2d").drawImage(loader, 0, 0, 720, 1280);
-      finalUrl = c.toDataURL("image/jpeg", 0.85);
-    } catch (e) {}
-    setPreview("image", finalUrl);
-    state.history.unshift({ url: finalUrl, title: state.currentSentence });
-    saveHistory();
-    renderHistory();
-    state.isGenerating = false;
-    setStep(2);
-    showToast("🎉 AI 實圖生成完成！");
-  };
-  loader.onerror = () => {
-    setPreview("none");
-    state.isGenerating = false;
-    setStep(2);
-    showToast("連線逾時，請再拉桿一次重試");
-  };
-  loader.src = imgUrl;
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 12000);
+      const response = await fetch(url, Object.assign({}, options, { signal: ctrl.signal }));
+      clearTimeout(t);
+      if (!response.ok && retries > 0) {
+        await delay(delayMs);
+        return fetchWithRetry(url, options, retries - 1, delayMs * 2);
+      }
+      return response;
+    } catch (err) {
+      if (retries > 0) {
+        await delay(delayMs);
+        return fetchWithRetry(url, options, retries - 1, delayMs * 2);
+      }
+      throw err;
+    }
+  })();
+}
+
+function handleGenerationFallback(promptText) {
+  const url = makeFallbackImage();
+  renderGeneratedResult(url);
+  showToast("生圖失敗，目前顯示的是示意圖，請在 Gemini Canvas 中執行");
+}
+
+function makeFallbackImage() {
+  const c = document.createElement("canvas");
+  c.width = 720; c.height = 1280;
+  const g = c.getContext("2d");
+  const grd = g.createLinearGradient(0, 0, 0, 1280);
+  grd.addColorStop(0, "#1a102f");
+  grd.addColorStop(1, "#0a0510");
+  g.fillStyle = grd;
+  g.fillRect(0, 0, 720, 1280);
+  g.strokeStyle = "#ffd764";
+  g.lineWidth = 8;
+  g.strokeRect(36, 36, 648, 1208);
+  g.fillStyle = "#ffd764";
+  g.font = "bold 48px sans-serif";
+  g.textAlign = "center";
+  g.fillText("示意圖", 360, 380);
+  g.font = "22px sans-serif";
+  g.fillStyle = "#c9a227";
+  g.fillText("請在 Gemini Canvas 中執行以生成實圖", 360, 430);
+  g.font = "28px sans-serif";
+  g.fillStyle = "#ffe08a";
+  const lines = [];
+  if (state.current.outfit) lines.push(state.current.outfit.name);
+  if (state.current.location) lines.push(state.current.location.name);
+  if (state.current.action) lines.push(state.current.action.name);
+  let y = 520;
+  lines.forEach(text => {
+    wrapText(g, text, 360, y, 620, 36);
+    y += 90;
+  });
+  return c.toDataURL("image/jpeg", 0.82);
+}
+function wrapText(g, text, x, y, maxW, lh) {
+  const chars = String(text).split("");
+  let line = "";
+  let yy = y;
+  chars.forEach(ch => {
+    const test = line + ch;
+    if (g.measureText(test).width > maxW) {
+      g.fillText(line, x, yy);
+      line = ch;
+      yy += lh;
+    } else line = test;
+  });
+  if (line) g.fillText(line, x, yy);
+}
+
+function renderGeneratedResult(imageUrl) {
+  setPreview("image", imageUrl);
+  addToHistory(imageUrl, state.currentSentence);
 }
 
 function setPreview(mode, url) {
-  $("preview-loading").classList.toggle("hidden", mode !== "loading");
-  const img = $("preview-image"), lcd = document.querySelector(".zone-lcd");
-  if (mode === "image" && url) { img.src = url; img.classList.remove("hidden"); lcd.classList.add("has-img"); }
-  else { img.classList.add("hidden"); lcd.classList.remove("has-img"); }
+  if (!IS_CANVAS) return;
+  const loading = $("preview-loading");
+  const img = $("preview-image");
+  const lcd = document.querySelector(".zone-lcd");
+  if (loading) loading.classList.add("hidden");
+  if (img) img.classList.add("hidden");
+  if (lcd) lcd.classList.remove("has-img");
+  if (mode === "loading") {
+    if (loading) loading.classList.remove("hidden");
+  } else if (mode === "image" && img && url) {
+    img.src = url;
+    img.classList.remove("hidden");
+    if (lcd) lcd.classList.add("has-img");
+  }
+}
+
+function addToHistory(imgUrl, title) {
+  state.history.unshift({ url: imgUrl, title: title || "", time: new Date().toLocaleTimeString() });
+  state.history = state.history.slice(0, 20);
+  saveHistory();
+  renderHistory();
 }
 
 function renderHistory() {
+  if (!IS_CANVAS) return;
   syncHistoryWall();
-  const box = $("history-grid"); box.innerHTML = "";
-  state.history.forEach(item => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "thumb";
-    const im = document.createElement("img"); im.src = item.url; im.alt = item.title || "";
-    b.appendChild(im); b.addEventListener("click", () => { $("lightbox-img").src = item.url; $("lightbox-cap").textContent = item.title || ""; $("lightbox").classList.add("show"); });
-    box.appendChild(b);
-  });
-  $("history-count").textContent = state.history.length + " 張";
+  const box = $("history-grid");
+  const count = $("history-count");
+  if (!box) return;
+  box.innerHTML = "";
+  if (!state.history.length) {
+    const d = document.createElement("div");
+    d.className = "empty-h";
+    d.textContent = "拉桿後會自動生圖，縮圖會出現在這裡，點擊可看原圖";
+    box.appendChild(d);
+  } else {
+    state.history.forEach((item, index) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "thumb";
+      b.setAttribute("data-h", String(index));
+      const im = document.createElement("img");
+      im.alt = item.title || "歷史圖片";
+      im.src = item.url;
+      b.appendChild(im);
+      b.addEventListener("click", () => openLightbox(item.url, item.title));
+      box.appendChild(b);
+    });
+  }
+  count.textContent = state.history.length + " 張";
 }
 
+function openLightbox(url, title) {
+  $("lightbox-img").src = url;
+  $("lightbox-cap").textContent = title || "";
+  $("lightbox").classList.add("show");
+}
+function closeLightbox() {
+  $("lightbox").classList.remove("show");
+  $("lightbox-img").src = "";
+}
+
+/* ---------- upload ---------- */
 function handleImageUpload(e) {
-  const file = e.target.files?.[0];
-  if (!file || !file.type.startsWith("image/")) return;
+  const file = (e.target.files && e.target.files[0]) || (e.dataTransfer && e.dataTransfer.files[0]);
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("請上傳正確的圖片格式！");
+    return;
+  }
   const reader = new FileReader();
-  reader.onload = ev => {
-    state.uploadedImageBase64 = ev.target.result; state.uploadedFileName = file.name;
-    $("user-image-preview").src = state.uploadedImageBase64; $("upload-filename").textContent = file.name;
+  reader.onload = function(event) {
+    state.uploadedImageBase64 = event.target.result;
+    state.uploadedFileName = file.name;
+    $("user-image-preview").src = state.uploadedImageBase64;
+    $("upload-filename").textContent = file.name;
     $("upload-preview").classList.add("show");
     if (state.current.outfit) buildOutputs();
-    showToast("照片載入成功！已鎖定五官");
+    showToast("照片載入成功！已鎖定五官特徵");
     if (!state.isSpinning && !state.isGenerating) setStep(2);
   };
   reader.readAsDataURL(file);
 }
+function removeUploadedImage() {
+  state.uploadedImageBase64 = null;
+  state.uploadedFileName = "";
+  $("file-input").value = "";
+  $("upload-preview").classList.remove("show");
+  if (state.current.outfit) buildOutputs();
+  showToast("已移除上傳照片");
+  if (!state.skippedUpload) setStep(1);
+}
 
-function openAdmin() { $("admin").classList.add("show"); renderAdmin(); }
-function closeAdmin() { $("admin").classList.remove("show"); initReels(); }
+/* ---------- admin ---------- */
+function urlWantsAdmin() {
+  try {
+    if (new URLSearchParams(location.search).has("admin")) return true;
+  } catch (e) {}
+  const h = (location.hash || "").replace(/^#/, "").toLowerCase();
+  return h === "admin";
+}
+function maybeOpenAdminFromUrl() {
+  if (urlWantsAdmin()) openAdmin();
+}
+function openAdmin() {
+  const el = $("admin");
+  if (el) el.classList.add("show");
+  renderAdmin();
+}
+function closeAdmin() {
+  const el = $("admin");
+  if (el) el.classList.remove("show");
+  if ((location.hash || "").replace(/^#/, "").toLowerCase() === "admin") {
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  }
+  initReels();
+}
 function renderAdmin() {
-  const sel = $("project-select"); sel.innerHTML = "";
-  state.store.projects.forEach(p => { const o = document.createElement("option"); o.value = p.id; o.textContent = p.name; if (p.id === state.activeId) o.selected = true; sel.appendChild(o); });
+  const sel = $("project-select");
+  sel.innerHTML = "";
+  state.store.projects.forEach(p => {
+    const o = document.createElement("option");
+    o.value = p.id;
+    o.textContent = p.name;
+    if (p.id === state.activeId) o.selected = true;
+    sel.appendChild(o);
+  });
   renderEntryList();
 }
 function renderEntryList() {
-  const p = activeProject(), list = p[state.adminTab] || [], box = $("entry-list"); box.innerHTML = "";
+  const p = activeProject();
+  const key = state.adminTab;
+  const list = p[key] || [];
+  const box = $("entry-list");
+  box.innerHTML = "";
+  if (!list.length) {
+    const d = document.createElement("div");
+    d.className = "empty-h";
+    d.textContent = "尚無詞條，請在下方新增";
+    box.appendChild(d);
+  }
   list.forEach((it, i) => {
-    const div = document.createElement("div"); div.className = "entry";
-    div.innerHTML = "<b>" + esc(it.name) + '</b><div class="en">' + esc(it.prompt) + '</div><div class="row"><button type="button" class="mini">修改</button><button type="button" class="mini danger">刪除</button></div>';
-    div.querySelectorAll("button")[0].onclick = () => { state.editingIndex = i; $("entry-name").value = it.name; $("entry-prompt").value = it.prompt; $("btn-save-entry").textContent = "儲存修改"; };
-    div.querySelectorAll("button")[1].onclick = () => { if (list.length > 1 && confirm("確定刪除？")) { list.splice(i, 1); saveProjects(); renderEntryList(); } };
+    const div = document.createElement("div");
+    div.className = "entry";
+    div.innerHTML = "<b></b><div class=\"en\"></div><div class=\"row\"></div>";
+    div.querySelector("b").textContent = it.name;
+    div.querySelector(".en").textContent = it.prompt;
+    const row = div.querySelector(".row");
+    const eBtn = document.createElement("button");
+    eBtn.type = "button"; eBtn.className = "mini"; eBtn.textContent = "修改";
+    eBtn.addEventListener("click", () => startEdit(i));
+    const dBtn = document.createElement("button");
+    dBtn.type = "button"; dBtn.className = "mini danger"; dBtn.textContent = "刪除";
+    dBtn.addEventListener("click", () => deleteEntry(i));
+    row.appendChild(eBtn); row.appendChild(dBtn);
     box.appendChild(div);
   });
-  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.getAttribute("data-tab") === state.adminTab));
+  $("entry-form-title").textContent = state.editingIndex >= 0 ? "修改詞條" : "新增詞條";
+  $("btn-save-entry").textContent = state.editingIndex >= 0 ? "儲存修改" : "新增";
+  document.querySelectorAll(".tabs button").forEach(b => {
+    b.classList.toggle("on", b.getAttribute("data-tab") === state.adminTab);
+  });
+}
+function startEdit(i) {
+  const it = activeProject()[state.adminTab][i];
+  state.editingIndex = i;
+  $("entry-name").value = it.name;
+  $("entry-prompt").value = it.prompt;
+  $("entry-form-title").textContent = "修改詞條";
+  $("btn-save-entry").textContent = "儲存修改";
+  $("entry-name").focus();
+}
+function cancelEdit() {
+  state.editingIndex = -1;
+  $("entry-name").value = "";
+  $("entry-prompt").value = "";
+  $("entry-form-title").textContent = "新增詞條";
+  $("btn-save-entry").textContent = "新增";
+}
+function saveEntry() {
+  const name = $("entry-name").value.trim();
+  const prompt = $("entry-prompt").value.trim();
+  if (!name || !prompt) {
+    showToast("請填寫中文名稱與英文提示詞");
+    return;
+  }
+  const p = activeProject();
+  const arr = p[state.adminTab];
+  if (state.editingIndex >= 0) {
+    arr[state.editingIndex] = { name, prompt };
+  } else {
+    arr.push({ name, prompt });
+  }
+  saveProjects();
+  cancelEdit();
+  renderEntryList();
+  showToast("詞條已儲存");
+}
+function deleteEntry(i) {
+  const p = activeProject();
+  if (p[state.adminTab].length <= 1) {
+    showToast("每個欄位至少保留一條詞");
+    return;
+  }
+  if (!confirm("確定刪除這條詞？")) return;
+  p[state.adminTab].splice(i, 1);
+  if (state.editingIndex === i) cancelEdit();
+  saveProjects();
+  renderEntryList();
+}
+function switchProject(id) {
+  if (!state.store.projects.some(p => p.id === id)) return;
+  state.activeId = id;
+  saveProjects();
+  cancelEdit();
+  renderAdmin();
+  initReels();
+  showToast("已切換至「" + activeProject().name + "」");
+}
+function createProject() {
+  const name = prompt("新專案名稱", "新專案 " + (state.store.projects.length + 1));
+  if (name == null) return;
+  const n = name.trim() || ("新專案 " + (state.store.projects.length + 1));
+  const src = activeProject();
+  const p = {
+    id: uid(),
+    name: n,
+    outfits: clone(src.outfits),
+    locations: clone(src.locations),
+    actions: clone(src.actions)
+  };
+  state.store.projects.push(p);
+  state.activeId = p.id;
+  saveProjects();
+  renderAdmin();
+  initReels();
+  showToast("已建立專案「" + n + "」");
+}
+function renameProject() {
+  const p = activeProject();
+  const name = prompt("重新命名專案", p.name);
+  if (name == null) return;
+  const n = name.trim();
+  if (!n) return;
+  p.name = n;
+  saveProjects();
+  renderAdmin();
+  showToast("已重新命名");
+}
+function deleteProject() {
+  if (state.store.projects.length <= 1) {
+    showToast("至少需保留一個專案");
+    return;
+  }
+  const p = activeProject();
+  if (!confirm("確定刪除專案「" + p.name + "」？")) return;
+  state.store.projects = state.store.projects.filter(x => x.id !== p.id);
+  state.activeId = state.store.projects[0].id;
+  saveProjects();
+  renderAdmin();
+  initReels();
+  showToast("專案已刪除");
+}
+function resetDefaultBanks() {
+  if (!confirm("將目前專案的詞庫還原成原本的經典詞條，確定？")) return;
+  const p = activeProject();
+  p.outfits = clone(DEFAULT_BANKS.outfits);
+  p.locations = clone(DEFAULT_BANKS.locations);
+  p.actions = clone(DEFAULT_BANKS.actions);
+  saveProjects();
+  cancelEdit();
+  renderAdmin();
+  initReels();
+  showToast("已還原預設詞庫");
+}
+function exportProject() {
+  const p = activeProject();
+  const data = {
+    name: p.name,
+    outfits: p.outfits,
+    locations: p.locations,
+    actions: p.actions,
+    exportedAt: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (p.name || "project") + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast("已匯出 JSON");
+}
+function importProjectFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      let list = [];
+      if (data && Array.isArray(data.projects)) list = data.projects;
+      else if (data && Array.isArray(data.outfits) && Array.isArray(data.locations) && Array.isArray(data.actions)) list = [data];
+      else throw new Error("格式不正確");
+      list.forEach((src, idx) => {
+        if (!Array.isArray(src.outfits) || !Array.isArray(src.locations) || !Array.isArray(src.actions)) return;
+        const p = {
+          id: uid(),
+          name: (src.name && String(src.name).trim()) || ("匯入專案 " + (idx + 1)),
+          outfits: src.outfits.map(normalizeEntry).filter(Boolean),
+          locations: src.locations.map(normalizeEntry).filter(Boolean),
+          actions: src.actions.map(normalizeEntry).filter(Boolean)
+        };
+        if (!p.outfits.length || !p.locations.length || !p.actions.length) {
+          showToast("匯入檔案有欄位是空的，已略過該專案");
+          return;
+        }
+        state.store.projects.push(p);
+        state.activeId = p.id;
+      });
+      saveProjects();
+      renderAdmin();
+      initReels();
+      showToast("匯入完成，目前專案：「" + activeProject().name + "」");
+    } catch (err) {
+      showToast("無法匯入：JSON 格式不正確");
+    }
+    $("import-file").value = "";
+  };
+  reader.readAsText(file);
+}
+function normalizeEntry(it) {
+  if (!it || !it.name || !it.prompt) return null;
+  return { name: String(it.name), prompt: String(it.prompt) };
 }
 
+/* ---------- toast ---------- */
 let toastTimer = null;
-function showToast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2600); }
-
-function bindUI() {
-  $("btn-fullscreen").onclick = () => {
-    const el = document.documentElement;
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
-    else (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
-  };
-
-  const marquee = document.querySelector(".zone-marquee");
-  let pressTimer = null;
-  marquee.addEventListener("pointerdown", () => { pressTimer = setTimeout(openAdmin, 3000); });
-  ["pointerup", "pointercancel", "pointerleave"].forEach(ev => marquee.addEventListener(ev, () => clearTimeout(pressTimer)));
-
-  $("btn-copy").onclick = () => { AudioEng.unlock(); copyCurrentPrompt(); };
-  $("btn-skip-upload").onclick = () => { AudioEng.unlock(); state.skippedUpload = true; setStep(2); showToast("已略過上傳，可直接開始"); };
-  ["btn-knob", "btn-spin-step"].forEach(id => $(id).onclick = () => { AudioEng.unlock(); triggerSpin(); });
-  $("btn-upload").onclick = () => $("file-input").click();
-  $("file-input").onchange = handleImageUpload;
-  $("btn-remove-photo").onclick = () => { state.uploadedImageBase64 = null; $("file-input").value = ""; $("upload-preview").classList.remove("show"); if (!state.skippedUpload) setStep(1); };
-  $("preview-image").onclick = () => { if ($("preview-image").src) { $("lightbox-img").src = $("preview-image").src; $("lightbox-cap").textContent = state.currentSentence; $("lightbox").classList.add("show"); } };
-  $("lightbox").onclick = e => { if (e.target.id === "lightbox" || e.target.id === "lightbox-close") $("lightbox").classList.remove("show"); };
-
-  $("btn-admin-close").onclick = closeAdmin;
-  $("project-select").onchange = e => { state.activeId = e.target.value; saveProjects(); renderAdmin(); initReels(); };
-  $("btn-new-project").onclick = () => { const n = prompt("新專案名稱"); if (n) { const src = activeProject(), p = { id: uid(), name: n, outfits: clone(src.outfits), locations: clone(src.locations), actions: clone(src.actions) }; state.store.projects.push(p); state.activeId = p.id; saveProjects(); renderAdmin(); initReels(); } };
-  $("btn-rename-project").onclick = () => { const p = activeProject(), n = prompt("重新命名", p.name); if (n) { p.name = n; saveProjects(); renderAdmin(); } };
-  $("btn-delete-project").onclick = () => { if (state.store.projects.length > 1 && confirm("確定刪除專案？")) { state.store.projects = state.store.projects.filter(x => x.id !== state.activeId); state.activeId = state.store.projects[0].id; saveProjects(); renderAdmin(); initReels(); } };
-  $("btn-export").onclick = () => { const p = activeProject(), a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(p, null, 2)], { type: "application/json" })); a.download = p.name + ".json"; a.click(); };
-  $("btn-import").onclick = () => $("import-file").click();
-  $("import-file").onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader(); r.onload = ev => { try { const d = JSON.parse(ev.target.result); if (d.outfits && d.locations && d.actions) { const p = { id: uid(), name: d.name || "匯入專案", outfits: d.outfits, locations: d.locations, actions: d.actions }; state.store.projects.push(p); state.activeId = p.id; saveProjects(); renderAdmin(); initReels(); showToast("匯入完成"); } } catch (err) { showToast("JSON 格式錯誤"); } }; r.readAsText(f);
-  };
-  $("btn-reset-banks").onclick = () => { if (confirm("還原預設詞庫？")) { const p = activeProject(); p.outfits = clone(DEFAULT_BANKS.outfits); p.locations = clone(DEFAULT_BANKS.locations); p.actions = clone(DEFAULT_BANKS.actions); saveProjects(); renderAdmin(); initReels(); } };
-  document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { state.adminTab = b.getAttribute("data-tab"); state.editingIndex = -1; renderEntryList(); });
-  $("btn-save-entry").onclick = () => {
-    const name = $("entry-name").value.trim(), prompt = $("entry-prompt").value.trim();
-    if (!name || !prompt) return;
-    const arr = activeProject()[state.adminTab];
-    if (state.editingIndex >= 0) arr[state.editingIndex] = { name, prompt }; else arr.push({ name, prompt });
-    state.editingIndex = -1; $("entry-name").value = ""; $("entry-prompt").value = ""; $("btn-save-entry").textContent = "新增";
-    saveProjects(); renderEntryList(); showToast("已儲存");
-  };
-  $("btn-cancel-entry").onclick = () => { state.editingIndex = -1; $("entry-name").value = ""; $("entry-prompt").value = ""; $("btn-save-entry").textContent = "新增"; };
-  $("btn-mute").onclick = async () => { await AudioEng.unlock(); AudioEng.toggleMute(); showToast(AudioEng.muted ? "已靜音" : "已開啟聲音"); };
+function showToast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  window.fitCabinetToViewport?.();
-  loadStore(); bindUI(); initReels(); renderHistory(); setStep(1); showLcd(false);
-});
+/* ---------- init ---------- */
+function bindUI() {
+  const adminClose = $("btn-admin-close");
+  if (adminClose) adminClose.addEventListener("click", closeAdmin);
+  window.addEventListener("hashchange", maybeOpenAdminFromUrl);
+  const marquee = document.querySelector(".zone-marquee");
+  if (marquee) {
+    let pressTimer = null;
+    const startPress = (e) => {
+      if (pressTimer) clearTimeout(pressTimer);
+      pressTimer = setTimeout(() => { pressTimer = null; openAdmin(); }, 3000);
+    };
+    const cancelPress = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+    marquee.addEventListener("pointerdown", startPress);
+    ["pointerup","pointercancel","pointerleave"].forEach(ev => marquee.addEventListener(ev, cancelPress));
+    marquee.addEventListener("contextmenu", (e) => e.preventDefault());
+  }
+  $("btn-copy").addEventListener("click", () => {
+    AudioEng.unlock();
+    copyCurrentPrompt();
+  });
+  const copyStep = $("btn-copy-step");
+  if (copyStep) copyStep.addEventListener("click", () => { AudioEng.unlock(); copyCurrentPrompt(); });
+  const skip = $("btn-skip-upload");
+  if (skip) skip.addEventListener("click", () => {
+    AudioEng.unlock();
+    state.skippedUpload = true;
+    setStep(2);
+    showToast("已略過上傳，可直接開始");
+  });
+  const spinBtns = ["btn-spin", "btn-knob", "btn-spin-step"].map($).filter(Boolean);
+  spinBtns.forEach(el => el.addEventListener("click", () => { AudioEng.unlock(); triggerSpin(); }));
+
+  if (IS_CANVAS) {
+    $("btn-upload").addEventListener("click", () => $("file-input").click());
+    $("file-input").addEventListener("change", handleImageUpload);
+    $("btn-remove-photo").addEventListener("click", removeUploadedImage);
+    $("preview-image").addEventListener("click", () => {
+      if ($("preview-image").src) openLightbox($("preview-image").src, state.currentSentence);
+    });
+  }
+
+  $("lightbox").addEventListener("click", (e) => {
+    if (e.target.id === "lightbox" || e.target.id === "lightbox-close") closeLightbox();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeLightbox(); closeAdmin(); }
+  });
+
+  $("project-select").addEventListener("change", (e) => switchProject(e.target.value));
+  $("btn-new-project").addEventListener("click", createProject);
+  $("btn-rename-project").addEventListener("click", renameProject);
+  $("btn-delete-project").addEventListener("click", deleteProject);
+  $("btn-export").addEventListener("click", exportProject);
+  $("btn-import").addEventListener("click", () => $("import-file").click());
+  $("import-file").addEventListener("change", (e) => importProjectFile(e.target.files[0]));
+  $("btn-reset-banks").addEventListener("click", resetDefaultBanks);
+  document.querySelectorAll(".tabs button").forEach(b => {
+    b.addEventListener("click", () => {
+      state.adminTab = b.getAttribute("data-tab");
+      cancelEdit();
+      renderEntryList();
+    });
+  });
+  $("btn-save-entry").addEventListener("click", saveEntry);
+  $("btn-cancel-entry").addEventListener("click", cancelEdit);
+
+  const fsBtn = $("btn-fs");
+  if (fsBtn) {
+    fsBtn.addEventListener("click", () => {
+      const target = document.documentElement;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (target.requestFullscreen) target.requestFullscreen().catch(() => showToast("請點擊右上角瀏覽器選單開啟全螢幕"));
+        else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    });
+  }
+
+  const muteBtn = $("btn-mute");
+  if (muteBtn) {
+    muteBtn.addEventListener("click", async () => {
+      await AudioEng.unlock();
+      AudioEng.toggleMute();
+      showToast(AudioEng.muted ? "已關閉聲音" : "已開啟聲音");
+    });
+  }
+
+  document.addEventListener("pointerdown", () => { AudioEng.unlock(); }, { once: true });
+}
+
+function boot() {
+  if (window.fitCabinetToViewport) window.fitCabinetToViewport();
+  loadStore();
+  bindUI();
+  initReels();
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => {
+      if (state.isSpinning) return;
+      const h = measureItemH();
+      if (Math.abs(h - ITEM_H) >= 1) initReels();
+    });
+    const vp = $("viewport-outfit");
+    if (vp) ro.observe(vp);
+  }
+  if (IS_CANVAS) {
+    renderHistory();
+    setStep(1);
+  } else {
+    setStep(1);
+    syncHistoryWall(false);
+  }
+  showLcd(false);
+  AudioEng.setMuted(false);
+  maybeOpenAdminFromUrl();
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+
+  </script>
+  <script>
+    if (/[?&]debug=1/.test(location.search)) document.body.classList.add("debug");
   </script>
 </body>
 </html>
-
