@@ -608,12 +608,11 @@ html.cabinet-scroll .machine {
     <div class="machine" id="machine">
       <img class="cabinet-art" alt="" draggable="false" src="https://a2003azxsdc-dotcom.github.io/assets/slot_cabinet_v2.svg">
       <button type="button" class="icon-btn zone" id="btn-fullscreen" style="left:3.5%;top:2.0%;width:8.5%;height:4.7%" title="全螢幕切換" aria-label="全螢幕切換">⛶</button>
-      <button type="button" class="icon-btn zone" id="btn-coin" style="left:78.5%;top:2.0%;width:8.5%;height:4.7%" title="投幣開台（設定免費 API Key）" aria-label="設定免費 API Key">🪙</button>
       <button type="button" class="icon-btn zone" id="btn-mute" style="left:88%;top:2.0%;width:8.5%;height:4.7%" aria-pressed="false" title="關閉聲音" aria-label="切換靜音">♪</button>
       <canvas id="fx-layer" class="fx-layer" aria-hidden="true"></canvas>
       <div class="jackpot-banner" id="jackpot-banner" aria-hidden="true">777 大当たり JACKPOT</div>
 
-      <section class="zone zone-marquee" style="left:13%;top:1.8%;width:64.5%;height:9.2%" aria-label="跑馬燈區">
+      <section class="zone zone-marquee" style="left:13%;top:1.8%;width:74%;height:9.2%" aria-label="跑馬燈區">
         <div class="mq-bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="marquee-box">
           <div class="marquee-track">
@@ -630,7 +629,7 @@ html.cabinet-scroll .machine {
         <img id="preview-image" class="lcd-preview hidden" alt="">
         <div class="lcd-loading hidden" id="preview-loading">
           <div class="spinner"></div>
-          <span>正在呼叫 GEMINI 影像引擎...</span>
+          <span>正在運算 9:16 荒謬實境大片...</span>
         </div>
         <div class="lcd-top">
           <span class="lcd-tag">造句組合</span>
@@ -670,25 +669,6 @@ html.cabinet-scroll .machine {
     <p class="cap" id="lightbox-cap"></p>
   </div>
 
-  <div id="coin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:75;padding:16px;align-items:center;justify-content:center;" aria-modal="true" role="dialog">
-    <div class="admin-card">
-      <h2>🪙 投幣開台（啟動免費即時生圖）</h2>
-      <p style="font-size:13px;color:#d2c0a8;line-height:1.55;margin-bottom:12px">
-        本機台免收費，直接連線你自己的 <b>Google Gemini 免費額度</b>在機台內算出 9:16 大片。貼上一次免費代幣碼（API Key）並存在本機後，之後免重複輸入。
-      </p>
-      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="display:inline-block;margin-bottom:12px;background:linear-gradient(180deg,#ffe07a,#d89b18);color:#241000;font-weight:900;font-size:13px;padding:8px 12px;border-radius:6px;text-decoration:none;">👉 點此前往 Google AI Studio 免費領取 Key</a>
-      <div class="field">
-        <label for="api-key-input">貼上你的 Gemini API Key（AIza 開頭）</label>
-        <input type="password" id="api-key-input" placeholder="AIzaSy..." autocomplete="off">
-      </div>
-      <div class="admin-row" style="margin-top:12px">
-        <button type="button" class="mini gold" id="btn-save-key">投入代幣並開台</button>
-        <button type="button" class="mini danger" id="btn-clear-key">退幣（清除 Key）</button>
-        <button type="button" class="mini" id="btn-close-coin">關閉</button>
-      </div>
-    </div>
-  </div>
-
   <div id="admin" aria-modal="true" role="dialog">
     <div class="admin-card">
       <h2>管理頁：詞庫與專案</h2>
@@ -706,8 +686,8 @@ html.cabinet-scroll .machine {
       </div>
       <div class="tabs">
         <button type="button" class="on" data-tab="outfits">穿著</button>
-        <button type="button" data-tab="locations">地點</button>
-        <button type="button" data-tab="actions">動作</button>
+        <button type="button" class="on" data-tab="locations">地點</button>
+        <button type="button" class="on" data-tab="actions">動作</button>
       </div>
       <div class="entry-list" id="entry-list"></div>
       <div class="field">
@@ -724,7 +704,6 @@ html.cabinet-scroll .machine {
       </div>
     </div>
   </div>
-
 <script>
   (function () {
     var AR = 1536 / 2752, MAX_W = 480, PHONE_W = 600, lastW = 0, lastH = 0, lastScroll = null;
@@ -764,9 +743,8 @@ html.cabinet-scroll .machine {
     document.addEventListener("DOMContentLoaded", fitCabinetToViewport);
   })();
 
-const IS_CANVAS = true;
 let ITEM_H = 96;
-const STORAGE = { PROJECTS: "ccs_slot_projects_v1", ACTIVE: "ccs_slot_active_v1", HISTORY: "ccs_slot_history_v1", KEY: "ccs_gemini_user_key_v1" };
+const STORAGE = { PROJECTS: "ccs_slot_projects_v1", ACTIVE: "ccs_slot_active_v1", HISTORY: "ccs_slot_history_v1" };
 const DEFAULT_BANKS = {
   outfits: [
     { name: "粉紅蕾絲芭蕾蓬蓬裙", prompt: "wearing a fluffy pink lace ballet tutu with frills" },
@@ -857,7 +835,7 @@ function resetDefaultStore() {
 }
 function saveProjects() {
   try { localStorage.setItem(STORAGE.PROJECTS, JSON.stringify(state.store)); localStorage.setItem(STORAGE.ACTIVE, state.activeId); return true; }
-  catch (e) { showToast("專案儲存失敗"); return false; }
+  catch (e) { return false; }
 }
 function saveHistory() {
   let list = state.history.slice(0, 20);
@@ -868,7 +846,7 @@ function saveHistory() {
 }
 
 const AudioEng = {
-  ctx: null, muted: false, unlocked: false, bgTimer: null, spinNodes: null, master: null, bgGain: null, sfxGain: null,
+  ctx: null, muted: false, unlocked: false, bgTimer: null, master: null, bgGain: null, sfxGain: null,
   init() {
     if (this.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -896,7 +874,7 @@ const AudioEng = {
     if (this.master) this.master.gain.value = this.muted ? 0 : 1;
     this.syncMuteBtn();
     if (!this.muted && this.unlocked) this.startBGM();
-    if (this.muted) { this.stopBGM(); this.stopSpinLoop(); }
+    if (this.muted) this.stopBGM();
   },
   toggleMute() { this.setMuted(!this.muted); },
   osc(type, freq, dur, gain, dest, at, slide) {
@@ -917,8 +895,6 @@ const AudioEng = {
     src.connect(f); f.connect(g); g.connect(dest || this.sfxGain); src.start(t); src.stop(t + dur + 0.02);
   },
   startWhoosh() { this.noise(0.22, 0.55, this.sfxGain, null, 400, "lowpass", 0.7); this.osc("sawtooth", 140, 0.28, 0.28, this.sfxGain, null, 520); },
-  startSpinLoop() { this.stopSpinLoop(); },
-  stopSpinLoop() {},
   tick() { this.noise(0.014, 0.16, this.sfxGain, null, 2600, "bandpass", 1.4); },
   clunk(i) { const base = 150 - (i || 0) * 18; this.osc("sine", base, 0.22, 0.7, this.sfxGain, null, 48); this.noise(0.07, 0.45, this.sfxGain, null, 700, "lowpass", 0.8); },
   jackpot() {
@@ -936,7 +912,6 @@ const AudioEng = {
 };
 
 const JackpotFX = {
-  parts: [], raf: 0, until: 0,
   start() {
     const machine = $("machine"); if (machine) machine.classList.add("is-jackpot");
     const banner = $("jackpot-banner"); if (banner) { banner.classList.remove("show"); void banner.offsetWidth; banner.classList.add("show"); }
@@ -1019,9 +994,7 @@ function buildOutputs() {
   if (!outfit || !location || !action) return;
   state.currentSentence = "今天身穿【" + outfit.name + "】，在【" + location.name + "】，【" + action.name + "】！";
   $("sentence").innerHTML = '今天身穿【<span class="hl">' + esc(outfit.name) + '</span>】，在【<span class="hl">' + esc(location.name) + '</span>】，【<span class="hl">' + esc(action.name) + '</span>】！';
-  state.currentPrompt = state.uploadedImageBase64
-    ? "A casual, authentic phone camera snapshot of the exact person from the uploaded reference image, strictly preserving facial identity, natural skin texture, eye shape and original features. The person is " + outfit.prompt + ", " + location.prompt + ", actively " + action.prompt + ". Realistic candid photography, natural ambient lighting, candid unposed moment, imperfect phone camera framing, 8k resolution, photorealistic."
-    : "A casual, authentic phone camera snapshot of a person. The subject is " + outfit.prompt + ", " + location.prompt + ", actively " + action.prompt + ". Realistic candid photography, natural ambient lighting, authentic everyday life snapshot, unposed, natural expressions, 8k resolution, photorealistic.";
+  state.currentPrompt = "Candid authentic smartphone snapshot of a Taiwanese person " + outfit.prompt + ", " + location.prompt + ", actively " + action.prompt + ", natural lighting, unposed real life photo, 8k photorealistic";
 }
 
 function copyCurrentPrompt() {
@@ -1047,8 +1020,6 @@ async function triggerSpin() {
   if (state.isSpinning || state.isGenerating) return;
   const p = activeProject();
   if (!canvasReadyToSpin()) { showToast("請先上傳照片，或點「略過上傳」"); return; }
-  const apiKey = (localStorage.getItem(STORAGE.KEY) || "").trim();
-  if (!apiKey) { showToast("請先投入免費 Gemini 代幣碼！"); openCoinModal(); return; }
 
   await AudioEng.unlock();
   state.isSpinning = true; setStep(2); setSpinEnabled(false);
@@ -1069,49 +1040,41 @@ async function triggerSpin() {
   generateAIImage();
 }
 
-async function generateAIImage() {
+/* ---------- 免 API Key 即時生圖引擎 ---------- */
+function generateAIImage() {
   if (state.isGenerating || state.isSpinning || !state.currentPrompt) return;
-  const apiKey = (localStorage.getItem(STORAGE.KEY) || "").trim();
-  if (!apiKey) { openCoinModal(); return; }
+  state.isGenerating = true;
+  setPreview("loading");
 
-  state.isGenerating = true; setPreview("loading");
-  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=" + encodeURIComponent(apiKey);
-  try {
-    const parts = state.uploadedImageBase64
-      ? [
-          { text: "Strictly reference the facial features, eyes, and likeness of the person in this uploaded image, maintaining exact character identity and realism: " + state.currentPrompt },
-          { inlineData: { mimeType: state.uploadedImageBase64.split(";")[0].split(":")[1] || "image/png", data: state.uploadedImageBase64.split(",")[1] } }
-        ]
-      : [{ text: state.currentPrompt }];
+  const seed = Math.floor(Math.random() * 9999999);
+  const encodedPrompt = encodeURIComponent(state.currentPrompt);
+  const imgUrl = "https://image.pollinations.ai/prompt/" + encodedPrompt + "?width=720&height=1280&seed=" + seed + "&nologo=true&model=flux";
 
-    const payload = {
-      contents: [{ role: "user", parts }],
-      generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "9:16" } }
-    };
-
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 35000);
-    const res = await fetch(apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: ctrl.signal });
-    clearTimeout(timer);
-    const result = await res.json();
-    if (!res.ok) throw new Error((result.error && result.error.message) || ("HTTP " + res.status));
-
-    const outParts = result.candidates?.[0]?.content?.parts || [];
-    const imgPart = outParts.find(p => p.inlineData && p.inlineData.data);
-    if (!imgPart) throw new Error("未收到影像回傳");
-    const imgUrl = "data:" + (imgPart.inlineData.mimeType || "image/png") + ";base64," + imgPart.inlineData.data;
-
-    setPreview("image", imgUrl);
-    state.history.unshift({ url: imgUrl, title: state.currentSentence });
-    saveHistory(); renderHistory();
-    showToast("🎉 AI 生圖成功！");
-  } catch (err) {
-    console.error(err);
+  const loader = new Image();
+  loader.crossOrigin = "anonymous";
+  loader.onload = () => {
+    let finalUrl = imgUrl;
+    try {
+      const c = document.createElement("canvas");
+      c.width = 720; c.height = 1280;
+      c.getContext("2d").drawImage(loader, 0, 0, 720, 1280);
+      finalUrl = c.toDataURL("image/jpeg", 0.85);
+    } catch (e) {}
+    setPreview("image", finalUrl);
+    state.history.unshift({ url: finalUrl, title: state.currentSentence });
+    saveHistory();
+    renderHistory();
+    state.isGenerating = false;
+    setStep(2);
+    showToast("🎉 AI 實圖生成完成！");
+  };
+  loader.onerror = () => {
     setPreview("none");
-    showToast("生圖失敗：" + (err.message || "請檢查 API Key 是否有效"));
-  } finally {
-    state.isGenerating = false; setStep(2);
-  }
+    state.isGenerating = false;
+    setStep(2);
+    showToast("連線逾時，請再拉桿一次重試");
+  };
+  loader.src = imgUrl;
 }
 
 function setPreview(mode, url) {
@@ -1148,9 +1111,6 @@ function handleImageUpload(e) {
   reader.readAsDataURL(file);
 }
 
-function openCoinModal() { $("api-key-input").value = localStorage.getItem(STORAGE.KEY) || ""; $("coin-modal").style.display = "flex"; }
-function closeCoinModal() { $("coin-modal").style.display = "none"; }
-
 function openAdmin() { $("admin").classList.add("show"); renderAdmin(); }
 function closeAdmin() { $("admin").classList.remove("show"); initReels(); }
 function renderAdmin() {
@@ -1179,14 +1139,6 @@ function bindUI() {
     if (!document.fullscreenElement && !document.webkitFullscreenElement) (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
     else (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
   };
-  $("btn-coin").onclick = openCoinModal;
-  $("btn-close-coin").onclick = closeCoinModal;
-  $("btn-save-key").onclick = () => {
-    const val = $("api-key-input").value.trim();
-    if (!val) { showToast("請貼上有效的 API Key"); return; }
-    localStorage.setItem(STORAGE.KEY, val); closeCoinModal(); showToast("🪙 代幣投入成功！可以開轉了");
-  };
-  $("btn-clear-key").onclick = () => { localStorage.removeItem(STORAGE.KEY); $("api-key-input").value = ""; showToast("已清除本機代幣碼"); };
 
   const marquee = document.querySelector(".zone-marquee");
   let pressTimer = null;
