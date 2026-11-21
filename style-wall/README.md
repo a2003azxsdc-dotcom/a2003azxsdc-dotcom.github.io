@@ -1,6 +1,6 @@
 # 風格參考牆
 
-Simon 的個人參考牆。圖片為主，點開才看筆記。管理頁可上傳圖片或影片，由 Gemini 當場分析，再寫回這個倉庫。
+Simon 的個人參考牆。圖片為主，點開才看筆記。管理頁可上傳圖片或影片，由 Gemini 當場分析，再寫回 `a2003azxsdc-dotcom.github.io` 的 `style-wall/`。
 
 網站是純靜態檔案，給 GitHub Pages 用。沒有自己的伺服器，也沒有排程。
 
@@ -14,7 +14,7 @@ Simon 的個人參考牆。圖片為主，點開才看筆記。管理頁可上�
 ## 第一次設定
 
 1. 在倉庫 Settings → Pages，Source 選 Deploy from a branch，分支 `main`，資料夾 `/ (root)`。
-2. 打開管理頁，依頁面上的步驟建立 GitHub 細粒度 token（只勾這個倉庫，Contents 讀寫）與 Gemini API 金鑰，各貼一次。
+2. 打開管理頁，依頁面上的步驟建立 GitHub 細粒度 token（只勾 `a2003azxsdc-dotcom.github.io`，Contents 讀寫）與 Gemini API 金鑰，各貼一次。
 3. 預設模型是 `gemini-4-hydrogen`。`gemini-2.5-flash` 將在 2026-12-01 被轉走。
 
 公開網址形如 `https://a2003azxsdc-dotcom.github.io/style-wall/` ，管理頁在後面加 `admin.html`。

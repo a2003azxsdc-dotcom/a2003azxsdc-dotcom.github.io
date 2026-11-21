@@ -1,4 +1,5 @@
 import { bytesToBase64, decodeBase64Utf8, encodeUtf8Base64 } from './codec.js';
+import { contentPath } from './config.js';
 
 export class GitHubError extends Error {
   constructor(message, status) {
@@ -59,10 +60,10 @@ export async function fetchFileMeta({ token, owner, repo, branch, path, fetchImp
   return res.json();
 }
 
-export async function loadRemoteDocument({ token, owner, repo, branch, path = 'data/items.json', fetchImpl = fetch }) {
+export async function loadRemoteDocument({ token, owner, repo, branch, path = contentPath('data/items.json'), fetchImpl = fetch }) {
   const meta = await fetchFileMeta({ token, owner, repo, branch, path, fetchImpl });
   if (!meta || Array.isArray(meta)) {
-    throw new GitHubError('找不到 data/items.json。', 404);
+    throw new GitHubError('找不到 style-wall/data/items.json。', 404);
   }
   if (meta.content) {
     return { doc: JSON.parse(decodeBase64Utf8(meta.content)), sha: meta.sha };

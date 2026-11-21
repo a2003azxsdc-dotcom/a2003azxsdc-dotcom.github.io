@@ -1,7 +1,8 @@
+import { contentPath } from './config.js';
 import { getBlob } from './storage.js';
 
 export function rawUrl(cfg, path, stamp) {
-  const encoded = String(path)
+  const encoded = contentPath(path)
     .split('/')
     .map((part) => encodeURIComponent(part))
     .join('/');

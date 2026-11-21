@@ -1,4 +1,4 @@
-import { DEFAULTS, loadConfig, resolveRepo } from './config.js';
+import { DEFAULTS, contentPath, loadConfig, resolveRepo } from './config.js';
 import { el, clear, copyText } from './dom.js';
 import { attachImage, attachVideo } from './images.js';
 import { CATEGORIES, TABS, filterItems, mergeItems, unwrapItems } from './model.js';
@@ -263,6 +263,7 @@ async function loadItems() {
       owner: cfg.owner,
       repo: cfg.repo,
       branch: cfg.branch,
+      path: contentPath('data/items.json'),
     });
     remote = unwrapItems(doc);
     remoteOk = true;

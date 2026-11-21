@@ -1,4 +1,4 @@
-import { loadConfig, resolveRepo } from './config.js';
+import { contentPath, loadConfig, resolveRepo } from './config.js';
 import { el, clear } from './dom.js';
 import { analyzeMedia } from './gemini.js';
 import { deleteFile, loadRemoteDocument, putFile } from './github.js';
@@ -118,6 +118,7 @@ async function refreshLibrary() {
       owner: repo.owner,
       repo: repo.repo,
       branch: repo.branch,
+      path: contentPath('data/items.json'),
     });
     remote = unwrapItems(doc);
   } catch {
@@ -389,12 +390,12 @@ document.querySelector('#save-item').addEventListener('click', async () => {
     if (prepared.kind === 'image') {
       src = `media/${id}.jpg`;
       poster = '';
-      uploads.push({ path: src, bytes: prepared.bytes });
+      uploads.push({ path: contentPath(src), bytes: prepared.bytes });
     } else {
       src = `media/${id}.${prepared.ext || 'mp4'}`;
       poster = `media/${id}-poster.jpg`;
-      uploads.push({ path: src, bytes: prepared.bytes });
-      uploads.push({ path: poster, bytes: prepared.posterBytes });
+      uploads.push({ path: contentPath(src), bytes: prepared.bytes });
+      uploads.push({ path: contentPath(poster), bytes: prepared.posterBytes });
     }
   }
   if (!src) {
@@ -448,6 +449,7 @@ document.querySelector('#save-item').addEventListener('click', async () => {
         owner: repo.owner,
         repo: repo.repo,
         branch: repo.branch,
+        path: contentPath('data/items.json'),
       });
       const nextItems = unwrapItems(remote.doc).filter((entry) => entry.id !== id);
       nextItems.push(item);
@@ -457,7 +459,7 @@ document.querySelector('#save-item').addEventListener('click', async () => {
         owner: repo.owner,
         repo: repo.repo,
         branch: repo.branch,
-        path: 'data/items.json',
+        path: contentPath('data/items.json'),
         text: JSON.stringify(doc, null, 2),
         message: `${editing ? '更新' : '新增'}參考：${commitTitle(item.title)}`,
       });
@@ -467,7 +469,7 @@ document.querySelector('#save-item').addEventListener('click', async () => {
           owner: repo.owner,
           repo: repo.repo,
           branch: repo.branch,
-          path: editing.src,
+          path: contentPath(editing.src),
           message: `移除舊檔：${commitTitle(item.title)}`,
         }).catch(() => {});
         if (editing.poster && editing.poster !== poster) {
@@ -476,7 +478,7 @@ document.querySelector('#save-item').addEventListener('click', async () => {
             owner: repo.owner,
             repo: repo.repo,
             branch: repo.branch,
-            path: editing.poster,
+            path: contentPath(editing.poster),
             message: `移除舊縮圖：${commitTitle(item.title)}`,
           }).catch(() => {});
         }
@@ -525,6 +527,7 @@ document.querySelector('#confirm-yes').addEventListener('click', async () => {
         owner: repo.owner,
         repo: repo.repo,
         branch: repo.branch,
+        path: contentPath('data/items.json'),
       });
       const nextItems = unwrapItems(remote.doc).filter((entry) => entry.id !== item.id);
       await putFile({
@@ -532,7 +535,7 @@ document.querySelector('#confirm-yes').addEventListener('click', async () => {
         owner: repo.owner,
         repo: repo.repo,
         branch: repo.branch,
-        path: 'data/items.json',
+        path: contentPath('data/items.json'),
         text: JSON.stringify({ version: 1, items: sortItems(nextItems) }, null, 2),
         message: `刪除參考：${commitTitle(item.title)}`,
       });
@@ -542,7 +545,7 @@ document.querySelector('#confirm-yes').addEventListener('click', async () => {
           owner: repo.owner,
           repo: repo.repo,
           branch: repo.branch,
-          path: item.src,
+          path: contentPath(item.src),
           message: `刪除檔案：${commitTitle(item.title)}`,
         }).catch(() => {});
       }
@@ -552,7 +555,7 @@ document.querySelector('#confirm-yes').addEventListener('click', async () => {
           owner: repo.owner,
           repo: repo.repo,
           branch: repo.branch,
-          path: item.poster,
+          path: contentPath(item.poster),
           message: `刪除縮圖：${commitTitle(item.title)}`,
         }).catch(() => {});
       }

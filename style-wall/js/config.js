@@ -2,10 +2,16 @@ import { readRepoOverride, getSecrets } from './storage.js';
 
 export const DEFAULTS = {
   owner: 'a2003azxsdc-dotcom',
-  repo: 'style-wall',
+  repo: 'a2003azxsdc-dotcom.github.io',
   branch: 'main',
   model: 'gemini-4-hydrogen',
 };
+
+export function contentPath(path) {
+  const clean = String(path || '').replace(/^\/+/, '');
+  if (clean === 'style-wall' || clean.startsWith('style-wall/')) return clean;
+  return `style-wall/${clean}`;
+}
 
 export async function loadConfig() {
   try {

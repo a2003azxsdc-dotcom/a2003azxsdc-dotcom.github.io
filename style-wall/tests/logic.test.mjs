@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { decodeBase64Utf8, encodeUtf8Base64 } from '../js/codec.js';
+import { DEFAULTS, contentPath } from '../js/config.js';
 import {
   buildGenerateBody,
   buildPrompt,
   extractCandidateText,
 } from '../js/gemini.js';
+import { rawUrl } from '../js/images.js';
 import {
   buildPutRequest,
   explainGitHubStatus,
@@ -171,6 +173,18 @@ describe('GitHub 寫入', () => {
       message: '更新目錄',
     });
     assert.match(request.url, /contents\/data\/items\.json$/);
+  });
+
+  it('遠端讀寫指向主網站倉庫的 style-wall 路徑', () => {
+    assert.equal(DEFAULTS.repo, 'a2003azxsdc-dotcom.github.io');
+    assert.equal(DEFAULTS.branch, 'main');
+    assert.equal(contentPath('data/items.json'), 'style-wall/data/items.json');
+    assert.equal(contentPath('media/a.jpg'), 'style-wall/media/a.jpg');
+    assert.equal(contentPath('style-wall/media/a.jpg'), 'style-wall/media/a.jpg');
+    assert.equal(
+      rawUrl(DEFAULTS, 'media/a.jpg', '1'),
+      'https://raw.githubusercontent.com/a2003azxsdc-dotcom/a2003azxsdc-dotcom.github.io/main/style-wall/media/a.jpg?t=1',
+    );
   });
 
   it('權限錯誤有中文說明', () => {
